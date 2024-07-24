@@ -1,24 +1,27 @@
-import logo from './logo.svg';
-import './App.css';
+// App.js
+
+import React from "react";
+import { Grid, Paper } from "@mui/material";
+
+const data = [0, 1, 3, 5, 8, 13, 20, 40, 100];
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Grid container spacing={1}>
+      {data.map((item, index) => (
+        <Grid item xs={8} md={3} key={index}>
+          <Paper
+            style={{
+              padding: 20,
+              textAlign: "center",
+              color: "#3f51b5",
+            }}
+          >
+            {item}
+          </Paper>
+        </Grid>
+      ))}
+    </Grid>
   );
 }
 
