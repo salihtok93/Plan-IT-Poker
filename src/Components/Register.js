@@ -10,17 +10,36 @@ import {
 
 function UserRoleDialog({ open, onClose, onSubmit }) {
   const [name, setName] = useState("");
-  const [role, setRole] = useState("");
+  const [email, setEmail] = useState("");
 
   const handleCancel = () => {
     setName("");
-    setRole("");
+    setEmail("");
     onClose();
   };
 
   const handleSubmit = () => {
-    onSubmit({ name, role });
-    handleCancel();
+    // console.log("DATA ", { name, email });
+
+    const myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+
+    const raw = JSON.stringify({
+      name: name,
+      email: email,
+    });
+
+    const requestOptions = {
+      method: "POST",
+      headers: myHeaders,
+      body: raw,
+      redirect: "follow",
+    };
+
+    fetch("http://192.168.103.14:3000/new-user", requestOptions)
+      .then((response) => response.text())
+      .then((result) => console.log(result))
+      .catch((error) => console.error(error));
   };
 
   return (
@@ -38,11 +57,11 @@ function UserRoleDialog({ open, onClose, onSubmit }) {
         />
         <TextField
           margin="dense"
-          label="Rol"
+          label="Email"
           type="text"
           fullWidth
-          value={role}
-          onChange={(e) => setRole(e.target.value)}
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
         />
       </DialogContent>
       <DialogActions>
@@ -57,7 +76,7 @@ function UserRoleDialog({ open, onClose, onSubmit }) {
   );
 }
 
-export default function App() {
+export default function Register() {
   const [dialogOpen, setDialogOpen] = useState(false);
 
   const handleOpenDialog = () => {
