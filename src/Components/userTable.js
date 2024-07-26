@@ -6,9 +6,6 @@ import ListItemText from "@mui/material/ListItemText";
 import Avatar from "@mui/material/Avatar";
 import { Button, Typography } from "@mui/material";
 import Badge from "@mui/material/Badge";
-import Checkbox from "@mui/material/Checkbox";
-import MenuIcon from "@mui/icons-material/Menu";
-import MenuOpenIcon from "@mui/icons-material/MenuOpen";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
@@ -16,8 +13,6 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import VerifiedUserIcon from "@mui/icons-material/VerifiedUser";
-
-const label = { inputProps: { "aria-label": "Checkbox demo" } };
 
 //AXİOS İLE GET YAPILIP KULLANICILAR ÖYLE ALINICAK
 const USERS = [
@@ -47,8 +42,8 @@ function UserTable() {
     copy.push({
       id: copy.length + 1,
       name: "Samm Teknoloji",
-      avatarUrl: "classic_avatar.png",
-      status: true,
+      role: "user",
+      status: false,
     });
     setUsers(copy);
   };
@@ -69,7 +64,7 @@ function UserTable() {
             <ListItemAvatar onClick={() => handleCheckboxClick(user)}>
               <Badge badgeContent={""} color={badgeColor} variant="dot">
                 <Avatar alt={user.name} variant="rounded">
-                  {user.role == "admin" ? (
+                  {user.role === "admin" ? (
                     <VerifiedUserIcon />
                   ) : (
                     <AccountCircleIcon />

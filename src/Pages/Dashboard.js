@@ -12,7 +12,7 @@ const Dashboard = () => {
   return (
     <Grid container spacing={3}>
       <Grid item xs={8}>
-        <Grid container spacing={1}>
+        <Grid container spacing={2}>
           {numbers.map((number, index) => (
             <Grid item lg={3} sm={6} key={index}>
               <Paper
