@@ -5,6 +5,7 @@ import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
+
 const Dashboard = () => {
   const numbers = [0, 1, 2, 3, 5, 8, 13, 20, 40, 100, "?"];
 
@@ -39,13 +40,13 @@ const Dashboard = () => {
               marginBottom: 16,
             }}
           >
-            <r>Oylamayı başlatmak için "Başlat" tıklayın</r>
+            <Typography>Oylamayı başlatmak için "Başlat" tıklayın</Typography>
             <Button variant="contained" color="info">
               Başlat
             </Button>
           </div>
           <hr />
-          <r>Oyuncular</r>
+          <Typography>Oyuncular</Typography>
           <hr />
           <Usertable />
           <hr />
