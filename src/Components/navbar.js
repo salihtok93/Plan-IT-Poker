@@ -29,7 +29,7 @@ export default function ButtonAppBar() {
             component="div"
             sx={{ flexGrow: 1, color: "black" }}
           >
-            PlanİtPoker
+            PlanITPoker
           </Typography>
           <Register />
         </Toolbar>

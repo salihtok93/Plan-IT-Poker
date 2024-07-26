@@ -8,6 +8,9 @@ import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 
 const Dashboard = () => {
   const numbers = [0, 1, 2, 3, 5, 8, 13, 20, 40, 100, "?"];
+  const handleClick = (number) => {
+    console.log("Paper clicked!", number);
+  };
 
   return (
     <Grid container spacing={3}>
@@ -16,6 +19,15 @@ const Dashboard = () => {
           {numbers.map((number, index) => (
             <Grid item lg={3} sm={6} key={index}>
               <Paper
+                onClick={() => handleClick(number)}
+                sx={{
+                  padding: "16px",
+                  cursor: "pointer",
+                  "&:hover": {
+                    backgroundColor: "#f5f5f5", // Üzerine gelince arka plan rengi
+                    boxShadow: "0 0 10px rgba(0, 1, 1, 0.3)", // Gölge efekti
+                  },
+                }}
                 style={{
                   padding: "30px",
                   height: "200px",
