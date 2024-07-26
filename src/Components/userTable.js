@@ -9,6 +9,11 @@ import Badge from "@mui/material/Badge";
 import Checkbox from "@mui/material/Checkbox";
 import MenuIcon from "@mui/icons-material/Menu";
 import MenuOpenIcon from "@mui/icons-material/MenuOpen";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
 
 const label = { inputProps: { "aria-label": "Checkbox demo" } };
 
@@ -25,12 +30,13 @@ const USERS = [
 
 function UserTable() {
   const [users, setUsers] = useState(USERS);
-  const [selectedUser, setSelectedUser] = useState(null);
   const [openDialog, setOpenDialog] = useState(false);
 
   const handleCheckboxClick = (user) => {
-    setSelectedUser(user);
     setOpenDialog(true);
+  };
+  const handleClose = () => {
+    setOpenDialog(false);
   };
 
   const onAddUser = () => {
@@ -72,6 +78,13 @@ function UserTable() {
           </ListItem>
         );
       })}
+      <Dialog open={openDialog} onClose={handleClose}>
+        <DialogTitle>{"Kullanıcı bilgileri"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText>DİALOG EKRANI İÇERİK GELİCEK</DialogContentText>
+        </DialogContent>
+        <DialogActions></DialogActions>
+      </Dialog>
     </List>
   );
 }
