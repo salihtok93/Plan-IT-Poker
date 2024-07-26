@@ -7,6 +7,7 @@ import {
   TextField,
   Button,
 } from "@mui/material";
+import axios from "axios";
 
 function UserRoleDialog({ open, onClose, onSubmit }) {
   const [name, setName] = useState("");
@@ -24,22 +25,17 @@ function UserRoleDialog({ open, onClose, onSubmit }) {
     const myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
 
-    const raw = JSON.stringify({
-      name: name,
-      email: email,
-    });
-
-    const requestOptions = {
-      method: "POST",
-      headers: myHeaders,
-      body: raw,
-      redirect: "follow",
-    };
-
-    fetch("http://192.168.103.14:3000/new-user", requestOptions)
-      .then((response) => response.text())
-      .then((result) => console.log(result))
-      .catch((error) => console.error(error));
+    axios
+      .post("http://192.168.103.14:3000/new-user", {
+        name: name,
+        email: email,
+      })
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   return (
