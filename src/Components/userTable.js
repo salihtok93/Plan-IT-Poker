@@ -4,7 +4,7 @@ import ListItem from "@mui/material/ListItem";
 import ListItemAvatar from "@mui/material/ListItemAvatar";
 import ListItemText from "@mui/material/ListItemText";
 import Avatar from "@mui/material/Avatar";
-import { Button } from "@mui/material";
+import { Button, Typography } from "@mui/material";
 import Badge from "@mui/material/Badge";
 import Checkbox from "@mui/material/Checkbox";
 import MenuIcon from "@mui/icons-material/Menu";
@@ -14,16 +14,18 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import VerifiedUserIcon from "@mui/icons-material/VerifiedUser";
 
 const label = { inputProps: { "aria-label": "Checkbox demo" } };
 
 //AXİOS İLE GET YAPILIP KULLANICILAR ÖYLE ALINICAK
 const USERS = [
-  { id: 1, name: "Salih Tok", avatarUrl: "classic_avatar.png", status: true },
+  { id: 1, name: "Salih Tok", role: "user", status: true },
   {
     id: 2,
     name: "Emrah Dasdemir",
-    avatarUrl: "classic_avatar.png",
+    role: "admin",
     status: false,
   },
 ];
@@ -64,17 +66,25 @@ function UserTable() {
         const badgeColor = user.status ? "success" : "error";
         return (
           <ListItem key={user.id}>
-            <ListItemAvatar>
-              <Badge badgeContent={""} color={badgeColor}></Badge>
-              <Avatar alt={user.name} src={user.avatarUrl} />
+            <ListItemAvatar onClick={() => handleCheckboxClick(user)}>
+              <Badge badgeContent={""} color={badgeColor} variant="dot">
+                <Avatar alt={user.name} variant="rounded">
+                  {user.role == "admin" ? (
+                    <VerifiedUserIcon />
+                  ) : (
+                    <AccountCircleIcon />
+                  )}
+                </Avatar>
+              </Badge>
             </ListItemAvatar>
             <ListItemText primary={user.name} />
-            <Checkbox
+            <Typography>1</Typography>
+            {/* <Checkbox
               {...label}
               icon={<MenuIcon />}
               checkedIcon={<MenuOpenIcon />}
               onClick={() => handleCheckboxClick(user)}
-            />
+            /> */}
           </ListItem>
         );
       })}

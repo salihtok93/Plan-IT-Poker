@@ -17,15 +17,36 @@ const Dashboard = () => {
             <Grid item lg={3} sm={6} key={index}>
               <Paper
                 style={{
-                  padding: "20px",
+                  padding: "30px",
+                  height: "200px",
                 }}
               >
-                <Typography
-                  variant="h6"
-                  style={{ textAlign: "center", height: "80" }}
+                <Grid
+                  container
+                  direction="row"
+                  justifyContent="center"
+                  alignItems="center"
+                  style={{
+                    height: "100%",
+                    border: "1px solid gray",
+                    borderRadius: 8,
+                    position: "relative",
+                  }}
                 >
-                  {number}
-                </Typography>
+                  <Typography
+                    variant="body1"
+                    style={{ position: "absolute", left: -10, top: -10 }}
+                  >
+                    {number}
+                  </Typography>
+                  <Typography variant="h2">{number}</Typography>
+                  <Typography
+                    variant="body1"
+                    style={{ position: "absolute", right: -10, bottom: -10 }}
+                  >
+                    {number}
+                  </Typography>
+                </Grid>
               </Paper>
             </Grid>
           ))}
