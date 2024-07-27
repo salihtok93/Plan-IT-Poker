@@ -13,6 +13,7 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import VerifiedUserIcon from "@mui/icons-material/VerifiedUser";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 //AXİOS İLE GET YAPILIP KULLANICILAR ÖYLE ALINICAK
 const USERS = [
@@ -34,6 +35,10 @@ function UserTable() {
   };
   const handleClose = () => {
     setOpenDialog(false);
+  };
+  const handleDeleteUser = (userId) => {
+    console.log("Kullanıcı silme butonuna tıklandı");
+    // Silme butonuna tıklandığında yapılacak işlemler buraya
   };
 
   const onAddUser = () => {
@@ -73,7 +78,20 @@ function UserTable() {
               </Badge>
             </ListItemAvatar>
             <ListItemText primary={user.name} />
-            <Typography>1</Typography>
+            {user.status ? null : (
+              <DeleteIcon
+                sx={{
+                  "&:hover": {
+                    color: "red",
+                    transform: "scale(1.2)",
+                    transition: "color 0.3s, transform 0.3s",
+                  },
+                }}
+                onClick={() => handleDeleteUser(user.id)}
+              />
+            )}
+            <Typography sx={{ marginLeft: 2 }}>1</Typography>
+
             {/* <Checkbox
               {...label}
               icon={<MenuIcon />}
