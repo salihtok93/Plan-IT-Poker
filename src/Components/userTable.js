@@ -66,7 +66,15 @@ function UserTable() {
         const badgeColor = user.status ? "success" : "error";
         return (
           <ListItem key={user.id}>
-            <ListItemAvatar onClick={() => handleCheckboxClick(user)}>
+            <ListItemAvatar
+              sx={{
+                "&:hover": {
+                  transform: "scale(1.2)",
+                  transition: "transform 0.3s",
+                },
+              }}
+              onClick={() => handleCheckboxClick(user)}
+            >
               <Badge badgeContent={""} color={badgeColor} variant="dot">
                 <Avatar alt={user.name} variant="rounded">
                   {user.role === "admin" ? (
