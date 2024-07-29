@@ -1,14 +1,14 @@
 // src/App.js
 import React from "react";
 import Dashboard from "./Pages/Dashboard";
-// import Register from "./Components/Register";
 import Navbar from "./Components/navbar";
+// import RoomTable from "./Components/roomtable";
 function App() {
   return (
     <div className="App">
-      {/* <Register /> */}
       <Navbar />
       <Dashboard />
+      {/* <RoomTable /> */}
     </div>
   );
 }
