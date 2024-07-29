@@ -5,6 +5,7 @@ import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
+import Choice from "../Components/choice";
 
 const Dashboard = () => {
   const numbers = [0, 1, 2, 3, 5, 8, 13, 20, 40, 100, "?"];
@@ -13,9 +14,9 @@ const Dashboard = () => {
   };
 
   return (
-    <Grid container spacing={3}>
+    <Grid container spacing={3} style={{ marginLeft: "50px", padding: "20px" }}>
       <Grid item xs={8}>
-        <Grid container spacing={2}>
+        <Grid container spacing={2} style={{ marginBottom: "24px" }}>
           {numbers.map((number, index) => (
             <Grid item lg={3} sm={6} key={index}>
               <Paper
@@ -63,9 +64,10 @@ const Dashboard = () => {
             </Grid>
           ))}
         </Grid>
+        <Choice />
       </Grid>
       <Grid item lg={3}>
-        <Paper elevation={3} style={{ padding: 16, height: "100%" }}>
+        <Paper elevation={3} style={{ padding: 16, height: "96%" }}>
           <div
             style={{
               display: "flex",

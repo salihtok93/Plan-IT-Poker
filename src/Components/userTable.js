@@ -43,14 +43,19 @@ function UserTable() {
 
   const onAddUser = () => {
     console.log("ATEA");
-    const copy = JSON.parse(JSON.stringify(users));
-    copy.push({
-      id: copy.length + 1,
+    const newUser = {
+      id: users.length + 1,
       name: "Samm Teknoloji",
       role: "user",
       status: false,
-    });
-    setUsers(copy);
+    };
+
+    const updatedUsers = [...users, newUser];
+    setUsers(updatedUsers);
+    console.log(newUser); // Yeni kullanıcıyı konsola yazdır
+
+    //kullanıcının ID'sini localStorage'a kaydet
+    localStorage.setItem(`user${newUser.id}.id`, newUser.id);
   };
 
   return (
