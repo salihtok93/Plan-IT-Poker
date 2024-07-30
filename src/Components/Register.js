@@ -7,8 +7,8 @@ import {
   TextField,
   Button,
 } from "@mui/material";
-import axios from "axios";
 import OpenSnackbar from "./snackbar";
+import { registerUser } from "../Services/userService";
 
 function UserRoleDialog({ open, onClose, onSubmit }) {
   const [name, setName] = useState("");
@@ -28,11 +28,7 @@ function UserRoleDialog({ open, onClose, onSubmit }) {
   };
 
   const handleSubmit = () => {
-    axios
-      .post("http://192.168.103.14:3000/new-user", {
-        name: name,
-        email: email,
-      })
+    registerUser({ name: name, email: email })
       .then((res) => {
         console.log(res);
         handleCancel();

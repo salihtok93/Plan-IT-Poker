@@ -16,9 +16,8 @@ import {
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import VerifiedUserIcon from "@mui/icons-material/VerifiedUser";
 import DeleteIcon from "@mui/icons-material/Delete";
-import axios from "axios";
-import { updateUser } from "../Services/userService";
-import OpenSnackbar from "./snackbar"; // Snackbar bileşenini içe aktarın
+import { fetchUser, updateUser } from "../Services/userService";
+import OpenSnackbar from "./snackbar";
 
 function UserTable() {
   const [users, setUsers] = useState([]);
@@ -29,7 +28,7 @@ function UserTable() {
 
   const fetchUsers = async () => {
     try {
-      const response = await axios.get("http://192.168.103.14:3000/users");
+      const response = await fetchUser();
       setUsers(response.data);
     } catch (error) {
       console.error("Error fetching users:", error);
