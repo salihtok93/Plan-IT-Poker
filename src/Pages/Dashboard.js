@@ -15,7 +15,7 @@ const Dashboard = () => {
   };
 
   return (
-    <Grid container spacing={3} style={{ marginLeft: "50px", padding: "20px" }}>
+    <Grid container spacing={3} style={{ marginLeft: "20px", padding: "20px" }}>
       <Grid item lg={8} sm={8}>
         <Grid container spacing={2} style={{ marginBottom: "24px" }}>
           {numbers.map((number, index) => {
@@ -33,7 +33,7 @@ const Dashboard = () => {
         </Grid>
         <Choice />
       </Grid>
-      <Grid item lg={4} sm={4}>
+      <Grid item lg={3} sm={8}>
         <Paper elevation={3} style={{ padding: 16, height: "96%" }}>
           <div
             style={{

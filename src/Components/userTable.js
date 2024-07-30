@@ -4,23 +4,28 @@ import ListItem from "@mui/material/ListItem";
 import ListItemAvatar from "@mui/material/ListItemAvatar";
 import ListItemText from "@mui/material/ListItemText";
 import Avatar from "@mui/material/Avatar";
-import { Typography } from "@mui/material";
-import Badge from "@mui/material/Badge";
-import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
-import DialogTitle from "@mui/material/DialogTitle";
+import {
+  Typography,
+  Badge,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+} from "@mui/material";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import VerifiedUserIcon from "@mui/icons-material/VerifiedUser";
 import DeleteIcon from "@mui/icons-material/Delete";
 import axios from "axios";
 import { updateUser } from "../Services/userService";
+import OpenSnackbar from "./snackbar"; // Snackbar bileşenini içe aktarın
 
 function UserTable() {
   const [users, setUsers] = useState([]);
   const [openDialog, setOpenDialog] = useState(false);
-  const [selectedUser, setSelectedUser] = useState(null); // Seçilen kullanıcıyı tutmak için durum
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
 
   const fetchUsers = async () => {
     try {
@@ -30,33 +35,38 @@ function UserTable() {
       console.error("Error fetching users:", error);
     }
   };
+
   useEffect(() => {
     fetchUsers();
   }, []);
 
   const handleCheckboxClick = (user) => {
-    setSelectedUser(user); // Seçilen kullanıcıyı ayarla
+    setSelectedUser(user);
     setOpenDialog(true);
   };
 
   const handleClose = () => {
     setOpenDialog(false);
-    setSelectedUser(null); // Dialog kapatıldığında seçilen kullanıcıyı sıfırla
+    setSelectedUser(null);
   };
 
   const handleDeleteUser = (userId) => {
     console.log("Kullanıcı silme butonuna tıklandı");
-    // Silme butonuna tıklandığında yapılacak işlemler buraya
+    // Silme işlemleri
   };
 
   const updateRole = async () => {
     if (selectedUser) {
       try {
-        const newRole = "admin"; // Mevcut role göre yeni rolü belirle
+        const newRole = "admin";
         updateUser({ userId: selectedUser.id, newRole })
           .then((res) => {
             console.log(res);
             fetchUsers();
+            setSnackbarMessage(
+              `${selectedUser.name} kullanıcısının rolü başarıyla güncellendi!`
+            );
+            setSnackbarOpen(true);
           })
           .catch((err) => {
             console.log(err);
@@ -66,11 +76,16 @@ function UserTable() {
             user.id === selectedUser.id ? { ...user, role: newRole } : user
           )
         );
-        handleClose(); // Dialogu kapat
+
+        handleClose();
       } catch (error) {
         console.error("Error updating role:", error);
       }
     }
+  };
+
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
   };
 
   return (
@@ -121,6 +136,9 @@ function UserTable() {
           {selectedUser && (
             <DialogContentText>
               <Typography variant="body1">
+                <strong>id:</strong> {selectedUser.id}
+              </Typography>
+              <Typography variant="body1">
                 <strong>İsim:</strong> {selectedUser.name}
               </Typography>
               <Typography variant="body1">
@@ -131,9 +149,6 @@ function UserTable() {
                 {selectedUser.status ? "Active" : "Inactive"}
               </Typography>
               <Typography variant="body1">
-                <strong>id:</strong> {selectedUser.id}
-              </Typography>
-              <Typography variant="body1">
                 <strong>score:</strong> {selectedUser.score}
               </Typography>
             </DialogContentText>
@@ -142,6 +157,11 @@ function UserTable() {
         </DialogContent>
         <DialogActions></DialogActions>
       </Dialog>
+      <OpenSnackbar
+        open={snackbarOpen}
+        message={snackbarMessage}
+        onClose={handleSnackbarClose}
+      />
     </List>
   );
 }
