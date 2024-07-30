@@ -1,11 +1,12 @@
-import React from "react";
-import { Grid, Paper, Typography, Button } from "@mui/material";
-import Usertable from "../Components/userTable";
-import Accordion from "@mui/material/Accordion";
-import AccordionSummary from "@mui/material/AccordionSummary";
-import AccordionDetails from "@mui/material/AccordionDetails";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
+import { Button, Grid, Paper, Typography } from "@mui/material";
+import Accordion from "@mui/material/Accordion";
+import AccordionDetails from "@mui/material/AccordionDetails";
+import AccordionSummary from "@mui/material/AccordionSummary";
+import React from "react";
 import Choice from "../Components/choice";
+import { PointCard } from "../Components/pointCard";
+import Usertable from "../Components/userTable";
 
 const Dashboard = () => {
   const numbers = [0, 1, 2, 3, 5, 8, 13, 20, 40, 100, "?"];
@@ -15,58 +16,24 @@ const Dashboard = () => {
 
   return (
     <Grid container spacing={3} style={{ marginLeft: "50px", padding: "20px" }}>
-      <Grid item xs={8}>
+      <Grid item lg={8} sm={8}>
         <Grid container spacing={2} style={{ marginBottom: "24px" }}>
-          {numbers.map((number, index) => (
-            <Grid item lg={3} sm={6} key={index}>
-              <Paper
-                onClick={() => handleClick(number)}
-                sx={{
-                  padding: "16px",
-                  cursor: "pointer",
-                  "&:hover": {
-                    backgroundColor: "#f5f5f5", // Üzerine gelince arka plan rengi
-                    boxShadow: "0 0 10px rgba(0, 1, 1, 0.3)", // Gölge efekti
-                  },
+          {numbers.map((number, index) => {
+            return (
+              <PointCard
+                key={"point-card-" + index}
+                index={index}
+                number={number}
+                handleClick={(data) => {
+                  handleClick(data);
                 }}
-                style={{
-                  padding: "30px",
-                  height: "200px",
-                }}
-              >
-                <Grid
-                  container
-                  direction="row"
-                  justifyContent="center"
-                  alignItems="center"
-                  style={{
-                    height: "100%",
-                    border: "1px solid gray",
-                    borderRadius: 8,
-                    position: "relative",
-                  }}
-                >
-                  <Typography
-                    variant="body1"
-                    style={{ position: "absolute", left: -10, top: -10 }}
-                  >
-                    {number}
-                  </Typography>
-                  <Typography variant="h2">{number}</Typography>
-                  <Typography
-                    variant="body1"
-                    style={{ position: "absolute", right: -10, bottom: -10 }}
-                  >
-                    {number}
-                  </Typography>
-                </Grid>
-              </Paper>
-            </Grid>
-          ))}
+              />
+            );
+          })}
         </Grid>
         <Choice />
       </Grid>
-      <Grid item lg={3}>
+      <Grid item lg={4} sm={4}>
         <Paper elevation={3} style={{ padding: 16, height: "96%" }}>
           <div
             style={{
