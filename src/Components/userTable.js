@@ -16,7 +16,7 @@ import {
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import VerifiedUserIcon from "@mui/icons-material/VerifiedUser";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { fetchUser, updateUser } from "../Services/userService";
+import { deleteUser, fetchUser, updateUser } from "../Services/userService";
 import OpenSnackbar from "./snackbar";
 
 function UserTable() {
@@ -51,7 +51,18 @@ function UserTable() {
 
   const handleDeleteUser = (userId) => {
     console.log("Kullanıcı silme butonuna tıklandı");
-    // Silme işlemleri
+    deleteUser(userId)
+      .then((response) => {
+        console.log("Kullanıcı başarıyla silindi", response.data);
+        setSnackbarMessage(`Kullanıcı başarıyla silindi`);
+        setSnackbarOpen(true);
+        fetchUsers();
+        setSelectedUser(null);
+      })
+      .catch((error) => {
+        console.error("Kullanıcı silinirken bir hata oluştu", error);
+        // Hata yönetimi, örneğin kullanıcıya hata mesajı gösterme
+      });
   };
 
   const updateRole = async () => {

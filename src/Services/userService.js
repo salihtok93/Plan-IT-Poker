@@ -3,7 +3,7 @@ const BASE = "http://192.168.103.14:3000";
 const USERS = "/users";
 
 export const registerUser = ({ name, email }) => {
-  return axios.post("http://192.168.103.14:3000/new-user", {
+  return axios.post(`${BASE}${USERS}/new-user`, {
     name: name,
     email: email,
   });
@@ -17,9 +17,9 @@ export const updateUser = ({ userId, newRole }) => {
 };
 
 export const fetchUser = () => {
-  return axios.get("http://192.168.103.14:3000/users");
+  return axios.get(`${BASE}${USERS}`);
 };
 
 export const deleteUser = (userId) => {
-  return axios.delete(`${BASE}${USERS}/${userId}`);
+  return axios.delete(`${BASE}${USERS}/${userId}`, { userId: userId });
 };
