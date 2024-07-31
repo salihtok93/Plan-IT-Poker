@@ -3,10 +3,11 @@ import { Button, Grid, Paper, Typography } from "@mui/material";
 import Accordion from "@mui/material/Accordion";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import AccordionSummary from "@mui/material/AccordionSummary";
-import React from "react";
+import React, { useEffect } from "react";
 import Choice from "../Components/choice";
 import { PointCard } from "../Components/pointCard";
 import Usertable from "../Components/userTable";
+import { socket } from "../Services/socket";
 
 const Dashboard = () => {
   const numbers = [0, 1, 2, 3, 5, 8, 13, 20, 40, 100, "?"];
@@ -14,6 +15,31 @@ const Dashboard = () => {
     console.log("Paper clicked!", number);
   };
 
+  useEffect(() => {
+    console.log("TEST");
+    function onConnect() {
+      console.log("CONNECTED ");
+    }
+
+    function onDisconnect() {
+      console.log("onDisconnect ");
+    }
+
+    function onFooEvent(value) {
+      console.log("onFooEvent ");
+    }
+
+    socket.on("error", onConnect);
+    socket.on("connect", onConnect);
+    socket.on("disconnect", onDisconnect);
+    socket.on("message", onFooEvent);
+
+    return () => {
+      socket.off("connect", onConnect);
+      socket.off("disconnect", onDisconnect);
+      socket.off("foo", onFooEvent);
+    };
+  }, []);
   return (
     <Grid container spacing={3} style={{ marginLeft: "20px", padding: "20px" }}>
       <Grid item lg={8} sm={8}>
