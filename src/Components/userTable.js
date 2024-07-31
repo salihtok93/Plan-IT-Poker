@@ -12,6 +12,7 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  Button,
 } from "@mui/material";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import VerifiedUserIcon from "@mui/icons-material/VerifiedUser";
@@ -23,6 +24,8 @@ function UserTable() {
   const [users, setUsers] = useState([]);
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
+  const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
+  const [userToDelete, setUserToDelete] = useState(null);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
 
@@ -50,19 +53,34 @@ function UserTable() {
   };
 
   const handleDeleteUser = (userId) => {
-    console.log("Kullanıcı silme butonuna tıklandı");
-    deleteUser(userId)
-      .then((response) => {
-        console.log("Kullanıcı başarıyla silindi", response.data);
-        setSnackbarMessage(`Kullanıcı başarıyla silindi`);
-        setSnackbarOpen(true);
-        fetchUsers();
-        setSelectedUser(null);
-      })
-      .catch((error) => {
-        console.error("Kullanıcı silinirken bir hata oluştu", error);
-        // Hata yönetimi, örneğin kullanıcıya hata mesajı gösterme
-      });
+    setUserToDelete(userId);
+    setConfirmDialogOpen(true);
+  };
+
+  const confirmDeleteUser = () => {
+    if (userToDelete) {
+      deleteUser(userToDelete)
+        .then((response) => {
+          console.log("Kullanıcı başarıyla silindi", response.data);
+          setSnackbarMessage(`Kullanıcı başarıyla silindi`);
+          setSnackbarOpen(true);
+          fetchUsers();
+          setSelectedUser(null);
+        })
+        .catch((error) => {
+          console.error("Kullanıcı silinirken bir hata oluştu", error);
+          // Hata yönetimi, örneğin kullanıcıya hata mesajı gösterme
+        })
+        .finally(() => {
+          setConfirmDialogOpen(false);
+          setUserToDelete(null);
+        });
+    }
+  };
+
+  const cancelDeleteUser = () => {
+    setConfirmDialogOpen(false);
+    setUserToDelete(null);
   };
 
   const updateRole = async () => {
@@ -166,6 +184,20 @@ function UserTable() {
           <button onClick={updateRole}>Rolü Değiştir</button>
         </DialogContent>
         <DialogActions></DialogActions>
+      </Dialog>
+      <Dialog open={confirmDialogOpen} onClose={cancelDeleteUser}>
+        <DialogTitle>Kullanıcıyı Sil</DialogTitle>
+        <DialogContent>
+          Bu kullanıcıyı silmek istediğinizden emin misiniz?
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={cancelDeleteUser} color="error">
+            İptal
+          </Button>
+          <Button onClick={confirmDeleteUser} color="primary" autoFocus>
+            Sil
+          </Button>
+        </DialogActions>
       </Dialog>
       <OpenSnackbar
         open={snackbarOpen}
