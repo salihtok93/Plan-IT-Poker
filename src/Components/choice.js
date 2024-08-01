@@ -3,9 +3,6 @@ import PropTypes from "prop-types";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
-import AddIcon from "@mui/icons-material/Add";
-import SettingsIcon from "@mui/icons-material/Settings";
-import IconButton from "@mui/material/IconButton";
 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -54,24 +51,16 @@ export default function BasicTabs() {
           <Tab label="Etkin Hikaye" {...a11yProps(0)} />
           <Tab label="Tamamlanmış Hikaye" {...a11yProps(1)} />
           <Tab label="Tüm Hikayeler" {...a11yProps(2)} />
-          <IconButton aria-label="add">
-            <AddIcon />
-            Yeni
-          </IconButton>
-          <IconButton aria-label="settings">
-            <SettingsIcon />
-            Ayarlar
-          </IconButton>
         </Tabs>
       </Box>
       <CustomTabPanel value={value} index={0}>
-        Item One
+        Test1
       </CustomTabPanel>
       <CustomTabPanel value={value} index={1}>
-        Item Two
+        Test1 Test2
       </CustomTabPanel>
       <CustomTabPanel value={value} index={2}>
-        Item Three
+        Tüm Hikayeler
       </CustomTabPanel>
     </Box>
   );

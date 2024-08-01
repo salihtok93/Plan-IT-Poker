@@ -10,7 +10,6 @@ import {
   Dialog,
   DialogActions,
   DialogContent,
-  DialogContentText,
   DialogTitle,
   Button,
 } from "@mui/material";
@@ -32,7 +31,7 @@ function UserTable({ triger }) {
   const fetchUsers = async () => {
     try {
       const response = await fetchUser();
-      console.log(response);
+      // console.log(response);
       setUsers(response.data);
     } catch (error) {
       console.error("Error fetching users:", error);
@@ -163,7 +162,7 @@ function UserTable({ triger }) {
         <DialogTitle>{"Kullanıcı Bilgileri"}</DialogTitle>
         <DialogContent>
           {selectedUser && (
-            <DialogContentText>
+            <>
               <Typography variant="body1">
                 <strong>id:</strong> {selectedUser.id}
               </Typography>
@@ -180,9 +179,9 @@ function UserTable({ triger }) {
               <Typography variant="body1">
                 <strong>score:</strong> {selectedUser.score}
               </Typography>
-            </DialogContentText>
+            </>
           )}
-          <button onClick={updateRole}>Rolü Değiştir</button>
+          <Button onClick={updateRole}>Rolü Değiştir</Button>
         </DialogContent>
         <DialogActions></DialogActions>
       </Dialog>
