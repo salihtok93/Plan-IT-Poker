@@ -10,7 +10,7 @@ import {
 import OpenSnackbar from "./snackbar";
 import { registerUser } from "../Services/userService";
 
-function UserRoleDialog({ open, onClose, onSubmit }) {
+function UserRoleDialog({ open, onClose, onSubmit, setTrigger }) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -32,6 +32,7 @@ function UserRoleDialog({ open, onClose, onSubmit }) {
       .then((res) => {
         console.log(res);
         handleCancel();
+        setTrigger();
         setSnackbarMessage("Kullanıcı başarıyla eklendi!");
         setSnackbarSeverity("success");
         setSnackbarOpen(true);
@@ -94,7 +95,7 @@ export default function Register({ setTrigger }) {
   };
 
   const handleCloseDialog = () => {
-    setTrigger();
+    // setTrigger();
     setDialogOpen(false);
   };
 
@@ -108,6 +109,9 @@ export default function Register({ setTrigger }) {
         Kullanıcı Kayıt
       </Button>
       <UserRoleDialog
+        setTrigger={() => {
+          setTrigger();
+        }}
         open={dialogOpen}
         onClose={handleCloseDialog}
         onSubmit={handleSubmit}
