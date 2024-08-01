@@ -20,7 +20,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { deleteUser, fetchUser, updateUser } from "../Services/userService";
 import OpenSnackbar from "./snackbar";
 
-function UserTable() {
+function UserTable({ triger }) {
   const [users, setUsers] = useState([]);
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
@@ -32,6 +32,7 @@ function UserTable() {
   const fetchUsers = async () => {
     try {
       const response = await fetchUser();
+      console.log(response);
       setUsers(response.data);
     } catch (error) {
       console.error("Error fetching users:", error);
@@ -40,7 +41,7 @@ function UserTable() {
 
   useEffect(() => {
     fetchUsers();
-  }, []);
+  }, [triger]);
 
   const handleCheckboxClick = (user) => {
     setSelectedUser(user);

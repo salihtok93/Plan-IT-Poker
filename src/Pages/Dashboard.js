@@ -3,7 +3,7 @@ import { Button, Grid, Paper, Typography } from "@mui/material";
 import Accordion from "@mui/material/Accordion";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import AccordionSummary from "@mui/material/AccordionSummary";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Choice from "../Components/choice";
 import { PointCard } from "../Components/pointCard";
 import Usertable from "../Components/userTable";
@@ -12,9 +12,15 @@ import Navbar from "../Components/navbar";
 
 const Dashboard = () => {
   const numbers = [0, 1, 2, 3, 5, 8, 13, 20, 40, 100, "?"];
+  const [triger, setTrigger] = useState(0);
+
   const handleClick = (number) => {
     console.log("Paper clicked!", number);
   };
+
+  useEffect(() => {
+    console.log(triger);
+  }, [triger]);
 
   useEffect(() => {
     console.log("TEST");
@@ -25,6 +31,9 @@ const Dashboard = () => {
     function onDisconnect() {
       console.log("onDisconnect ");
     }
+    function onNewUser() {
+      console.log("yeni kullanıcı");
+    }
 
     // function onFooEvent(value) {
     //   console.log("onFooEvent ");
@@ -33,6 +42,7 @@ const Dashboard = () => {
     // socket.on("error", onConnect);
     socket.on("connect", onConnect);
     socket.on("disconnect", onDisconnect);
+    socket.on("new user", onNewUser);
     // socket.on("message", onFooEvent);
 
     return () => {
@@ -43,7 +53,11 @@ const Dashboard = () => {
   }, []);
   return (
     <>
-      <Navbar />
+      <Navbar
+        setTrigger={() => {
+          setTrigger(triger + 1);
+        }}
+      />
       <Grid container spacing={3} style={{ padding: "20px" }}>
         <Grid item lg={8} sm={8}>
           <Grid container spacing={2} style={{ marginBottom: "24px" }}>
@@ -79,7 +93,7 @@ const Dashboard = () => {
             <hr />
             <Typography>Oyuncular</Typography>
             <hr />
-            <Usertable />
+            <Usertable triger={triger} />
             <hr />
             <Accordion>
               <AccordionSummary

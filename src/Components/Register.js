@@ -86,7 +86,7 @@ function UserRoleDialog({ open, onClose, onSubmit }) {
   );
 }
 
-export default function Register() {
+export default function Register({ setTrigger }) {
   const [dialogOpen, setDialogOpen] = useState(false);
 
   const handleOpenDialog = () => {
@@ -94,6 +94,7 @@ export default function Register() {
   };
 
   const handleCloseDialog = () => {
+    setTrigger();
     setDialogOpen(false);
   };
 
