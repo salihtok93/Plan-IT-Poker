@@ -6,6 +6,7 @@ import Typography from "@mui/material/Typography";
 import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
 import Register from "../Components/Register";
+import { Link } from "react-router-dom";
 
 export default function ButtonAppBar() {
   return (
@@ -30,7 +31,11 @@ export default function ButtonAppBar() {
             sx={{ flexGrow: 1, color: "black" }}
           >
             PlanITPoker
+            <Link style={{margin:"10px"}} to="/home">Home</Link>
+            <Link style={{margin:"10px"}} to="/">Vote</Link>
+            <Link style={{margin:"10px"}} to="/rooms">Rooms</Link>
           </Typography>
+          
           <Register />
         </Toolbar>
       </AppBar>

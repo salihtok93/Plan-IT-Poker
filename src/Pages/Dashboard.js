@@ -15,6 +15,7 @@ const Dashboard = () => {
   };
 
   return (
+    <>
     <Grid container spacing={3} style={{ marginLeft: "20px", padding: "20px" }}>
       <Grid item lg={8} sm={8}>
         <Grid container spacing={2} style={{ marginBottom: "24px" }}>
@@ -67,7 +68,7 @@ const Dashboard = () => {
           <Typography variant="h6" style={{ textAlign: "center" }}></Typography>
         </Paper>
       </Grid>
-    </Grid>
+    </Grid></>
   );
 };
 
