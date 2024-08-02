@@ -6,6 +6,7 @@ import Home from "./Pages/Home";
 import ProtectedRoutes from "./utility/ProtectedRoutes"
 import Rooms from "./Pages/Rooms";
 import Layout from "./layouts/Layout";
+import RegisterPage from "./Pages/RegisterPage";
 //import Dashboard from "./Pages/Dashboard";
 //import Navbar from "./Components/navbar";
 // import RoomTable from "./Components/roomtable";
@@ -23,6 +24,7 @@ function App() {
             </Route>
             <Route path="/home" element={<Home/>}/>
             <Route path="/rooms" element={<Rooms/>}/>
+            <Route path="/register" element={<RegisterPage/>}/>
           </Route>
         </Routes>
       </BrowserRouter>

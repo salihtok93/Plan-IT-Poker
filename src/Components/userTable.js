@@ -152,6 +152,9 @@ function UserTable() {
                 <strong>İsim:</strong> {selectedUser.name}
               </Typography>
               <Typography variant="body1">
+                <strong>Email:</strong> {selectedUser.email}
+              </Typography>
+              <Typography variant="body1">
                 <strong>Rol:</strong> {selectedUser.role}
               </Typography>
               <Typography variant="body1">

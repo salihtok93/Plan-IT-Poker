@@ -34,6 +34,7 @@ export default function ButtonAppBar() {
             <Link style={{margin:"10px"}} to="/home">Home</Link>
             <Link style={{margin:"10px"}} to="/">Vote</Link>
             <Link style={{margin:"10px"}} to="/rooms">Rooms</Link>
+            <Link style={{margin:"10px"}} to="/register">Register</Link>
           </Typography>
           
           <Register />
