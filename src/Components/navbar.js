@@ -37,7 +37,7 @@ export default function Navbar({ setTrigger }) {
             component="div"
             sx={{ flexGrow: 1, color: "black" }}
           >
-            PlanITPoker
+            SammITPoker
           </Typography>
           <Register
             setTrigger={() => {

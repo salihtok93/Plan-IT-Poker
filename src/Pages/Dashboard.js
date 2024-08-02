@@ -71,7 +71,7 @@ const Dashboard = () => {
       socket.off("break notification", onNotification);
       socket.off("connect", onConnect);
       socket.off("disconnect", onDisconnect);
-      socket.off("new user", onNewUser);
+      socket.off("user list", onNewUser);
       // socket.off("foo", onFooEvent);
     };
   }, []);
@@ -133,7 +133,9 @@ const Dashboard = () => {
             </Accordion>
             <hr></hr>
             <>
-              <Button onClick={handlePause}>Mola İste</Button>
+              <Button variant="contained" onClick={handlePause}>
+                Mola İste
+              </Button>
               <OpenSnackbar
                 position={snackbarPosition}
                 open={snackbarOpen}

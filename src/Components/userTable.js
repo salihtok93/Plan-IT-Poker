@@ -154,9 +154,9 @@ function UserTable({ triger }) {
                 onClick={() => handleDeleteUser(user.id)}
               />
             )}
-            <Typography sx={{ marginLeft: 2 }}>1</Typography>
+            <Typography sx={{ marginLeft: 2 }}>{user.score}</Typography>
           </ListItem>
-        );
+        ); //score yazma üstte
       })}
       <Dialog open={openDialog} onClose={handleClose}>
         <DialogTitle>{"Kullanıcı Bilgileri"}</DialogTitle>
