@@ -9,6 +9,7 @@ import {
 } from "@mui/material";
 import OpenSnackbar from "./snackbar";
 import { registerUser } from "../Services/userService";
+import { socket } from "../Services/socket";
 
 function UserRoleDialog({ open, onClose, onSubmit, setTrigger }) {
   const [name, setName] = useState("");
@@ -33,6 +34,7 @@ function UserRoleDialog({ open, onClose, onSubmit, setTrigger }) {
         console.log(res);
         handleCancel();
         setTrigger();
+        socket.emit("user list", { name });
         setSnackbarMessage("Kullanıcı başarıyla eklendi!");
         setSnackbarSeverity("success");
         setSnackbarOpen(true);

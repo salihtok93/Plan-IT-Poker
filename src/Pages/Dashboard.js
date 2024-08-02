@@ -33,6 +33,7 @@ const Dashboard = () => {
     }
     function onNewUser() {
       console.log("yeni kullanıcı");
+      setTrigger((t) => t + 1);
     }
 
     // function onFooEvent(value) {
@@ -42,12 +43,13 @@ const Dashboard = () => {
     // socket.on("error", onConnect);
     socket.on("connect", onConnect);
     socket.on("disconnect", onDisconnect);
-    socket.on("new user", onNewUser);
+    socket.on("user list", onNewUser);
     // socket.on("message", onFooEvent);
 
     return () => {
       socket.off("connect", onConnect);
       socket.off("disconnect", onDisconnect);
+      socket.off("new user", onNewUser);
       // socket.off("foo", onFooEvent);
     };
   }, []);

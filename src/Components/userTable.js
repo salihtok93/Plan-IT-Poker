@@ -179,6 +179,12 @@ function UserTable({ triger }) {
               <Typography variant="body1">
                 <strong>score:</strong> {selectedUser.score}
               </Typography>
+              <Typography variant="body1">
+                <strong>Created Time:</strong> {selectedUser.time}
+              </Typography>
+              <Typography variant="body1">
+                <strong>Email:</strong> {selectedUser.email}
+              </Typography>
             </>
           )}
           <Button onClick={updateRole}>Rolü Değiştir</Button>
