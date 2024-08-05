@@ -7,7 +7,7 @@ import {
   Typography,
 } from "@mui/material";
 import OpenSnackbar from "../Components/snackbar";
-import { registerUser } from "../Services/userService";
+import { fetchUser, registerUser } from "../Services/userService";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
@@ -19,11 +19,25 @@ function UserRoleCard({ onSubmit }) {
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
 
+  
+    //kod çalışmazsa array dizisi mi diye kontrol et
+    const allUsers = fetchUser();
+
+    const userVerification = () => {
+        const lastUserID = localStorage.getItem('serverResponse');
+
+        if(lastUserID) {
+            const valueFound = allUsers.some((user) => user === lastUserID);
+            if(!valueFound) {
+                localStorage.removeItem('serverResponse');
+            }
+        }
+    }
+
+
   const handleSnackbarClose = () => {
     setSnackbarOpen(false);
   };
-
-
 
   const handleCancel = () => {
     setName("");
@@ -31,11 +45,11 @@ function UserRoleCard({ onSubmit }) {
     navigate('/');
   };
 
-  const handleSubmit = () => {
+  const handleServerSubmit = () => {
     registerUser({ name: name, email: email })
       .then((res) => {
         console.log(res);
-        localStorage.setItem('serverResponse3',JSON.stringify(res.data.id));
+        localStorage.setItem('serverResponse',JSON.stringify(res.data.id));
         handleCancel();
         setSnackbarMessage("Kullanıcı başarıyla eklendi!");
         setSnackbarSeverity("success");
@@ -48,6 +62,11 @@ function UserRoleCard({ onSubmit }) {
         setSnackbarOpen(true);
       });
   };
+
+  const handleSubmit = () => {
+    handleServerSubmit();
+    userVerification();
+  }
 
  
   return (
