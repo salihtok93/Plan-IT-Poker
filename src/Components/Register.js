@@ -35,6 +35,8 @@ function UserRoleDialog({ open, onClose, onSubmit, setTrigger }) {
         handleCancel();
         setTrigger();
         socket.emit("user list", { name });
+        socket.emit("user online", res.data.id);
+        localStorage.setItem("userId", res.data.id);
         setSnackbarMessage("Kullanıcı başarıyla eklendi!");
         setSnackbarSeverity("success");
         setSnackbarOpen(true);
@@ -91,8 +93,21 @@ function UserRoleDialog({ open, onClose, onSubmit, setTrigger }) {
 
 export default function Register({ setTrigger }) {
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [snackbarPosition, setSnackbarPosition] = useState("bottom");
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
+  };
 
   const handleOpenDialog = () => {
+    const userId = localStorage.getItem("userId");
+    if (userId) {
+      setSnackbarMessage("Zaten Kayıtlısınız.");
+      setSnackbarPosition("center");
+      setSnackbarOpen(true);
+      return;
+    }
     setDialogOpen(true);
   };
 
@@ -117,6 +132,12 @@ export default function Register({ setTrigger }) {
         open={dialogOpen}
         onClose={handleCloseDialog}
         onSubmit={handleSubmit}
+      />
+      <OpenSnackbar
+        position={snackbarPosition}
+        open={snackbarOpen}
+        message={snackbarMessage}
+        onClose={handleSnackbarClose}
       />
     </>
   );

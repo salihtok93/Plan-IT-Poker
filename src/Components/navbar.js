@@ -4,20 +4,11 @@ import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import IconButton from "@mui/material/IconButton";
-import MenuIcon from "@mui/icons-material/Menu";
 import Register from "../Components/Register";
-// import { Button } from "@mui/material";
 
 export default function Navbar({ setTrigger }) {
   return (
     <Box sx={{ flexGrow: 1 }}>
-      {/* <Button
-        onClick={() => {
-          setTrigger();
-        }}
-      >
-        ARTI
-      </Button> */}
       <AppBar
         position="static"
         sx={{ backgroundColor: "#fff", marginBottom: 2 }}
@@ -27,10 +18,14 @@ export default function Navbar({ setTrigger }) {
             size="large"
             edge="start"
             color="black"
-            aria-label="menu"
+            aria-label="logo"
             sx={{ mr: 2 }}
           >
-            <MenuIcon />
+            <img
+              src={"/samm_logo.png"}
+              alt="Logo"
+              style={{ height: "40px", width: "auto" }}
+            />
           </IconButton>
           <Typography
             variant="h6"

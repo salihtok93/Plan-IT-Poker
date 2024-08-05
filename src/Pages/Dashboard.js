@@ -14,16 +14,18 @@ import OpenSnackbar from "../Components/snackbar";
 const Dashboard = () => {
   const numbers = [0, 1, 2, 3, 5, 8, 13, 20, 40, 100, "?"];
   const [triger, setTrigger] = useState(0);
+  const userId = localStorage.getItem("userId");
 
   const handleClick = (number) => {
     console.log("Paper clicked!", number);
+    socket.emit("update score", { userId, score: number });
   };
   const handlePause = () => {
     console.log("pause tıklandı");
     socket.emit("break request");
-    // setSnackbarMessage("Mola İsteniyor");
-    // setSnackbarPosition("center");
-    // setSnackbarOpen(true);
+    setSnackbarMessage("Mola İsteniyor");
+    setSnackbarPosition("center");
+    setSnackbarOpen(true);
   };
   const [snackbarPosition, setSnackbarPosition] = useState("bottom");
   const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -44,6 +46,7 @@ const Dashboard = () => {
 
     function onDisconnect() {
       console.log("onDisconnect ");
+      setTrigger((t) => t + 1);
     }
     function onNewUser() {
       console.log("yeni kullanıcı");
@@ -135,6 +138,9 @@ const Dashboard = () => {
             <>
               <Button variant="contained" onClick={handlePause}>
                 Mola İste
+              </Button>
+              <Button variant="contained" style={{ marginLeft: "70px" }}>
+                Sonuc Göster
               </Button>
               <OpenSnackbar
                 position={snackbarPosition}

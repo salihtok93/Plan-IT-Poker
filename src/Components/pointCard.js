@@ -3,7 +3,7 @@ import React from "react";
 
 export const PointCard = ({ number, handleClick, index }) => {
   return (
-    <Grid item lg={3} md={4} sm={6} key={index}>
+    <Grid item lg={3} md={3} sm={4} xs={6} key={index}>
       <Paper
         onClick={() => handleClick(number)}
         sx={{
