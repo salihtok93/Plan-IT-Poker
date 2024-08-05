@@ -1,7 +1,9 @@
 import axios from "axios";
-const BASE = "http://192.168.103.14:3000";
+// const BASE = "http://192.168.103.14:3000";
+const BASE = process.env.REACT_APP_BASE;
 const USERS = "/users";
 
+console.log(process.env.REACT_APP_BASE);
 export const registerUser = ({ name, email }) => {
   return axios.post(`${BASE}${USERS}/new-user`, {
     name: name,
@@ -17,6 +19,7 @@ export const updateUser = ({ userId, newRole }) => {
 };
 
 export const fetchUser = () => {
+  console.log("sdfgsdfgsdfgs");
   return axios.get(`${BASE}${USERS}`);
 };
 

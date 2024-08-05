@@ -5,6 +5,7 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import IconButton from "@mui/material/IconButton";
 import Register from "../Components/Register";
+import { Link } from "react-router-dom";
 
 export default function Navbar({ setTrigger }) {
   return (
@@ -32,8 +33,21 @@ export default function Navbar({ setTrigger }) {
             component="div"
             sx={{ flexGrow: 1, color: "black" }}
           >
-            SammITPoker
+            PlanITPoker
+            <Link style={{ margin: "10px" }} to="/home">
+              Home
+            </Link>
+            <Link style={{ margin: "10px" }} to="/">
+              Vote
+            </Link>
+            <Link style={{ margin: "10px" }} to="/rooms">
+              Rooms
+            </Link>
+            <Link style={{ margin: "10px" }} to="/register">
+              Register
+            </Link>
           </Typography>
+
           <Register
             setTrigger={() => {
               setTrigger();

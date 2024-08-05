@@ -95,12 +95,11 @@ const Dashboard = () => {
 
   return (
     <>
-      <Navbar
-        setTrigger={() => {
-          setTrigger(triger + 1);
-        }}
-      />
-      <Grid container spacing={3} style={{ padding: "20px" }}>
+      <Grid
+        container
+        spacing={3}
+        style={{ marginLeft: "20px", padding: "20px" }}
+      >
         <Grid item lg={8} sm={8}>
           <Grid container spacing={2} style={{ marginBottom: "24px" }}>
             {numbers.map((number, index) => {
@@ -109,72 +108,75 @@ const Dashboard = () => {
                   key={"point-card-" + index}
                   index={index}
                   number={number}
-                  handleClick={() => handleClick(number, index)} // Pass index to handleClick
+                  handleClick={(data) => {
+                    handleClick(data);
+                  }}
                 />
               );
             })}
           </Grid>
-          <Choice />
-        </Grid>
-        <Grid item lg={3} sm={8}>
-          <Paper elevation={3} style={{ padding: 16 }}>
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                marginBottom: 16,
-              }}
-            >
-              <Typography>Oylamayı başlatmak için "Başlat" tıklayın</Typography>
-              <Button variant="contained" color="info">
-                Başlat
-              </Button>
-            </div>
-            <hr />
-            <Typography>Oyuncular</Typography>
-            <hr />
-            <Usertable triger={triger} />
-            <hr />
-            <Accordion>
-              <AccordionSummary
-                expandIcon={<ArrowDownwardIcon />}
-                aria-controls="panel1-content"
-                id="panel1-header"
+          <Grid item lg={3} sm={8}>
+            <Paper elevation={3} style={{ padding: 16 }}>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  marginBottom: 16,
+                }}
               >
-                <Typography>Takım Arkadaşı davet et</Typography>
-              </AccordionSummary>
-              <AccordionDetails>
-                <Typography>URL VE KOPYALAMA EKLENECEK</Typography>
-              </AccordionDetails>
-            </Accordion>
-            <hr />
-            <>
-              <Button variant="contained" onClick={handlePause}>
-                Mola İste
-              </Button>
-              <Button
-                variant="contained"
-                style={{ marginLeft: "70px" }}
-                onClick={handleShowResults}
-              >
-                Sonuç Göster
-              </Button>
-              <OpenSnackbar
-                position={snackbarPosition}
-                open={snackbarOpen}
-                message={snackbarMessage}
-                onClose={handleSnackbarClose}
-              />
-            </>
-          </Paper>
+                <Typography>
+                  Oylamayı başlatmak için "Başlat" tıklayın
+                </Typography>
+                <Button variant="contained" color="info">
+                  Başlat
+                </Button>
+              </div>
+              <hr />
+              <Typography>Oyuncular</Typography>
+              <hr />
+              <Usertable triger={triger} />
+              <hr />
+              <Accordion>
+                <AccordionSummary
+                  expandIcon={<ArrowDownwardIcon />}
+                  aria-controls="panel1-content"
+                  id="panel1-header"
+                >
+                  <Typography>Takım Arkadaşı davet et</Typography>
+                </AccordionSummary>
+                <AccordionDetails>
+                  <Typography>URL VE KOPYALAMA EKLENECEK</Typography>
+                </AccordionDetails>
+              </Accordion>
+              <hr />
+              <>
+                <Button variant="contained" onClick={handlePause}>
+                  Mola İste
+                </Button>
+                <Button
+                  variant="contained"
+                  style={{ marginLeft: "70px" }}
+                  onClick={handleShowResults}
+                >
+                  Sonuç Göster
+                </Button>
+                <OpenSnackbar
+                  position={snackbarPosition}
+                  open={snackbarOpen}
+                  message={snackbarMessage}
+                  onClose={handleSnackbarClose}
+                />
+              </>
+            </Paper>
+          </Grid>
         </Grid>
+        <ChartDialog
+          open={dialogOpen}
+          onClose={() => setDialogOpen(false)}
+          xAxisData={numbers}
+          seriesData={clickCounts}
+        />
       </Grid>
-      <ChartDialog
-        open={dialogOpen}
-        onClose={() => setDialogOpen(false)}
-        xAxisData={numbers}
-        seriesData={clickCounts}
-      />
     </>
   );
 };
