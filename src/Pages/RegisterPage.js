@@ -19,21 +19,19 @@ function UserRoleCard({ onSubmit }) {
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
 
-  
-    //kod çalışmazsa array dizisi mi diye kontrol et
-    const allUsers = fetchUser();
+  //kod çalışmazsa array dizisi mi diye kontrol et
+  const allUsers = fetchUser();
 
-    const userVerification = () => {
-        const lastUserID = localStorage.getItem('serverResponse');
+  const userVerification = () => {
+    const lastUserID = localStorage.getItem("serverResponse");
 
-        if(lastUserID) {
-            const valueFound = allUsers.some((user) => user === lastUserID);
-            if(!valueFound) {
-                localStorage.removeItem('serverResponse');
-            }
-        }
+    if (lastUserID) {
+      const valueFound = allUsers.some((user) => user === lastUserID);
+      if (!valueFound) {
+        localStorage.removeItem("serverResponse");
+      }
     }
-
+  };
 
   const handleSnackbarClose = () => {
     setSnackbarOpen(false);
@@ -42,14 +40,14 @@ function UserRoleCard({ onSubmit }) {
   const handleCancel = () => {
     setName("");
     setEmail("");
-    navigate('/');
+    navigate("/");
   };
 
   const handleServerSubmit = () => {
     registerUser({ name: name, email: email })
       .then((res) => {
         console.log(res);
-        localStorage.setItem('serverResponse',JSON.stringify(res.data.id));
+        localStorage.setItem("serverResponse", JSON.stringify(res.data.id));
         handleCancel();
         setSnackbarMessage("Kullanıcı başarıyla eklendi!");
         setSnackbarSeverity("success");
@@ -66,21 +64,32 @@ function UserRoleCard({ onSubmit }) {
   const handleSubmit = () => {
     handleServerSubmit();
     userVerification();
-  }
+  };
 
- 
   return (
-    <div style={{
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-    }}>
-      <Card sx={{ margin:"80px", padding:"60px", minWidth: 350,minHeight:300 }}>
-        <Typography variant="h1" sx={{ fontSize: 25,display: 'flex', justifyContent: 'center', alignItems: 'center',}}>
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
+      <Card
+        sx={{ margin: "80px", padding: "60px", minWidth: 350, minHeight: 300 }}
+      >
+        <Typography
+          variant="h1"
+          sx={{
+            fontSize: 25,
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
           Kullanıcı Bilgileri
-        </Typography> 
-        <Typography sx={{marginTop:"20px",marginBottom:"40px"}}>
-        <TextField
+        </Typography>
+        <Typography sx={{ marginTop: "20px", marginBottom: "40px" }}>
+          <TextField
             autoFocus
             margin="dense"
             label="İsim"
@@ -97,11 +106,21 @@ function UserRoleCard({ onSubmit }) {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
-        </Typography>       
-          
-      
-        <CardActions sx={{display: 'flex', justifyContent: 'right', alignItems: 'center',}}>
-          <Button component={Link} to="/home" onClick={handleCancel} color="warning">
+        </Typography>
+
+        <CardActions
+          sx={{
+            display: "flex",
+            justifyContent: "right",
+            alignItems: "center",
+          }}
+        >
+          <Button
+            component={Link}
+            to="/home"
+            onClick={handleCancel}
+            color="warning"
+          >
             İptal
           </Button>
           <Button onClick={handleSubmit} color="success">
@@ -124,11 +143,5 @@ export default function RegisterPage() {
     console.log("Submitted data:", data); // şuan logluyo socket io ile post yollanacak
   };
 
-  return (
-    <>
-      <UserRoleCard
-        onSubmit={handleSubmit}
-      />
-    </>
-  );
+  return <UserRoleCard onSubmit={handleSubmit} />;
 }

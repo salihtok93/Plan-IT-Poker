@@ -8,7 +8,6 @@ import Choice from "../Components/choice";
 import { PointCard } from "../Components/pointCard";
 import Usertable from "../Components/userTable";
 import { socket } from "../Services/socket";
-import Navbar from "../Components/navbar";
 import OpenSnackbar from "../Components/snackbar";
 import ChartDialog from "../Components/chart";
 
@@ -16,33 +15,38 @@ const Dashboard = () => {
   const numbers = [0, 1, 2, 3, 5, 8, 13, 20, 40, 100, "?"];
   const [clickCounts, setClickCounts] = useState(
     new Array(numbers.length).fill(0)
-  ); //numbers dizisinin boyutunda yeni bir dizi oluştur ve bu diziyi 0 ile doldur
+  );
   const [triger, setTrigger] = useState(0);
   const [dialogOpen, setDialogOpen] = useState(false);
-  const userId = localStorage.getItem("userId");
+  const [selectedVote, setSelectedVote] = useState(null);
+  const userId = localStorage.getItem("serverResponse");
 
   const handleShowResults = () => {
     setDialogOpen(true);
   };
 
   const handleClick = (number, index) => {
-    console.log("Paper clicked!", number);
-    socket.emit("update score", { userId, score: number });
+    if (selectedVote !== null) return; // Birden fazla oylamayı engelle
 
-    //papera tıklandığında clickcounts u günceller
+    console.log("Paper clicked!", number);
+
+    // clickCounts değerlerini güncelle
     setClickCounts((prevCounts) => {
       const newCounts = [...prevCounts];
       newCounts[index] += 1;
       return newCounts;
     });
+
+    // Seçilen oyu ayarla
+    setSelectedVote(index);
+
+    // Kullanıcının puanını güncelleme olayını sunucuya gönder
+    socket.emit("update user score", { userId, score: number });
   };
 
   const handlePause = () => {
     console.log("pause tıklandı");
     socket.emit("break request");
-    setSnackbarMessage("Mola İsteniyor");
-    setSnackbarPosition("center");
-    setSnackbarOpen(true);
   };
 
   const [snackbarPosition, setSnackbarPosition] = useState("bottom");
@@ -80,102 +84,100 @@ const Dashboard = () => {
       setSnackbarOpen(true);
     }
 
+    function onUpdateScore({ userId, score }) {
+      console.log(`Kullanıcı ${userId} puanını ${score} olarak güncelledi`);
+      // Yerel kullanıcı durumunu güncelleme fonksiyonunu çağır
+      setTrigger((t) => t + 1);
+    }
+
     socket.on("break notification", onNotification);
     socket.on("connect", onConnect);
     socket.on("disconnect", onDisconnect);
     socket.on("user list", onNewUser);
+    socket.on("update score", onUpdateScore);
 
     return () => {
       socket.off("break notification", onNotification);
       socket.off("connect", onConnect);
       socket.off("disconnect", onDisconnect);
       socket.off("user list", onNewUser);
+      socket.off("update score", onUpdateScore);
     };
-  }, []);
+  }, [userId]);
 
   return (
     <>
-      <Grid
-        container
-        spacing={3}
-        style={{ marginLeft: "20px", padding: "20px" }}
-      >
+      <Grid container spacing={3} style={{ padding: "20px" }}>
         <Grid item lg={8} sm={8}>
           <Grid container spacing={2} style={{ marginBottom: "24px" }}>
-            {numbers.map((number, index) => {
-              return (
+            {dialogOpen ? (
+              <ChartDialog xAxisData={numbers} seriesData={clickCounts} />
+            ) : (
+              numbers.map((number, index) => (
                 <PointCard
                   key={"point-card-" + index}
                   index={index}
                   number={number}
-                  handleClick={(data) => {
-                    handleClick(data);
-                  }}
+                  handleClick={() => handleClick(number, index)}
+                  selected={selectedVote === index}
                 />
-              );
-            })}
+              ))
+            )}
           </Grid>
-          <Grid item lg={3} sm={8}>
-            <Paper elevation={3} style={{ padding: 16 }}>
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "center",
-                  marginBottom: 16,
-                }}
-              >
-                <Typography>
-                  Oylamayı başlatmak için "Başlat" tıklayın
-                </Typography>
-                <Button variant="contained" color="info">
-                  Başlat
-                </Button>
-              </div>
-              <hr />
-              <Typography>Oyuncular</Typography>
-              <hr />
-              <Usertable triger={triger} />
-              <hr />
-              <Accordion>
-                <AccordionSummary
-                  expandIcon={<ArrowDownwardIcon />}
-                  aria-controls="panel1-content"
-                  id="panel1-header"
-                >
-                  <Typography>Takım Arkadaşı davet et</Typography>
-                </AccordionSummary>
-                <AccordionDetails>
-                  <Typography>URL VE KOPYALAMA EKLENECEK</Typography>
-                </AccordionDetails>
-              </Accordion>
-              <hr />
-              <>
-                <Button variant="contained" onClick={handlePause}>
-                  Mola İste
-                </Button>
-                <Button
-                  variant="contained"
-                  style={{ marginLeft: "70px" }}
-                  onClick={handleShowResults}
-                >
-                  Sonuç Göster
-                </Button>
-                <OpenSnackbar
-                  position={snackbarPosition}
-                  open={snackbarOpen}
-                  message={snackbarMessage}
-                  onClose={handleSnackbarClose}
-                />
-              </>
-            </Paper>
-          </Grid>
+          {!dialogOpen && <Choice />}
         </Grid>
-        <ChartDialog
-          open={dialogOpen}
-          onClose={() => setDialogOpen(false)}
-          xAxisData={numbers}
-          seriesData={clickCounts}
-        />
+        <Grid item lg={3} sm={8}>
+          <Paper elevation={3} style={{ padding: 16 }}>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                marginBottom: 16,
+              }}
+            >
+              <Typography>Oylamayı başlatmak için "Başlat" tıklayın</Typography>
+              <Button variant="contained" color="info">
+                Başlat
+              </Button>
+            </div>
+            <hr />
+            <Typography>Oyuncular</Typography>
+            <hr />
+            <Usertable triger={triger} />
+            <hr />
+            <Accordion>
+              <AccordionSummary
+                expandIcon={<ArrowDownwardIcon />}
+                aria-controls="panel1-content"
+                id="panel1-header"
+              >
+                <Typography>Takım Arkadaşı davet et</Typography>
+              </AccordionSummary>
+              <AccordionDetails>
+                <Typography>URL VE KOPYALAMA EKLENECEK</Typography>
+              </AccordionDetails>
+            </Accordion>
+            <hr />
+            <>
+              <Button variant="contained" onClick={handlePause}>
+                Mola İste
+              </Button>
+              <Button
+                variant="contained"
+                style={{ marginLeft: "70px" }}
+                onClick={handleShowResults}
+              >
+                Sonuç Göster
+              </Button>
+              <OpenSnackbar
+                position={snackbarPosition}
+                open={snackbarOpen}
+                message={snackbarMessage}
+                onClose={handleSnackbarClose}
+              />
+            </>
+          </Paper>
+        </Grid>
       </Grid>
     </>
   );
