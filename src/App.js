@@ -20,11 +20,11 @@ function App() {
         <Routes>
           <Route path="/" element={<Layout/>}>
             <Route element={<ProtectedRoutes/>}>
-              <Route path="/" element={<Dashboard/>}/>
+              <Route path="/register" element={<RegisterPage/>}/>
             </Route>
             <Route path="/home" element={<Home/>}/>
             <Route path="/rooms" element={<Rooms/>}/>
-            <Route path="/register" element={<RegisterPage/>}/>
+            <Route path="/" element={<Dashboard/>}/>
           </Route>
         </Routes>
       </BrowserRouter>

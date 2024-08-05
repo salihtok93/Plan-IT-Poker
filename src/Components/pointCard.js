@@ -28,19 +28,20 @@ export const PointCard = ({ number, handleClick, index }) => {
             height: "100%",
             border: "1px solid gray",
             borderRadius: 8,
+            
             position: "relative",
           }}
         >
           <Typography
             variant="body1"
-            style={{ position: "absolute", left: -10, top: -10 }}
+            style={{ position: "absolute", left: -25, top: -25 }}
           >
             {number}
           </Typography>
           <Typography variant="h2">{number}</Typography>
           <Typography
             variant="body1"
-            style={{ position: "absolute", right: -10, bottom: -10 }}
+            style={{ position: "absolute", right: -25, bottom: -25,transform:"rotate(180deg)" }}
           >
             {number}
           </Typography>
