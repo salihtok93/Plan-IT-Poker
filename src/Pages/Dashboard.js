@@ -10,16 +10,33 @@ import Usertable from "../Components/userTable";
 import { socket } from "../Services/socket";
 import Navbar from "../Components/navbar";
 import OpenSnackbar from "../Components/snackbar";
+import ChartDialog from "../Components/chart";
 
 const Dashboard = () => {
   const numbers = [0, 1, 2, 3, 5, 8, 13, 20, 40, 100, "?"];
+  const [clickCounts, setClickCounts] = useState(
+    new Array(numbers.length).fill(0)
+  ); //numbers dizisinin boyutunda yeni bir dizi oluştur ve bu diziyi 0 ile doldur
   const [triger, setTrigger] = useState(0);
+  const [dialogOpen, setDialogOpen] = useState(false);
   const userId = localStorage.getItem("userId");
 
-  const handleClick = (number) => {
+  const handleShowResults = () => {
+    setDialogOpen(true);
+  };
+
+  const handleClick = (number, index) => {
     console.log("Paper clicked!", number);
     socket.emit("update score", { userId, score: number });
+
+    //papera tıklandığında clickcounts u günceller
+    setClickCounts((prevCounts) => {
+      const newCounts = [...prevCounts];
+      newCounts[index] += 1;
+      return newCounts;
+    });
   };
+
   const handlePause = () => {
     console.log("pause tıklandı");
     socket.emit("break request");
@@ -27,9 +44,11 @@ const Dashboard = () => {
     setSnackbarPosition("center");
     setSnackbarOpen(true);
   };
+
   const [snackbarPosition, setSnackbarPosition] = useState("bottom");
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
+
   const handleSnackbarClose = () => {
     setSnackbarOpen(false);
   };
@@ -48,10 +67,12 @@ const Dashboard = () => {
       console.log("onDisconnect ");
       setTrigger((t) => t + 1);
     }
+
     function onNewUser() {
       console.log("yeni kullanıcı");
       setTrigger((t) => t + 1);
     }
+
     function onNotification() {
       console.log("Mola isteği geldi");
       setSnackbarMessage("Elmo!");
@@ -59,25 +80,19 @@ const Dashboard = () => {
       setSnackbarOpen(true);
     }
 
-    // function onFooEvent(value) {
-    //   console.log("onFooEvent ");
-    // }
-
-    // socket.on("error", onConnect);
     socket.on("break notification", onNotification);
     socket.on("connect", onConnect);
     socket.on("disconnect", onDisconnect);
     socket.on("user list", onNewUser);
-    // socket.on("message", onFooEvent);
 
     return () => {
       socket.off("break notification", onNotification);
       socket.off("connect", onConnect);
       socket.off("disconnect", onDisconnect);
       socket.off("user list", onNewUser);
-      // socket.off("foo", onFooEvent);
     };
   }, []);
+
   return (
     <>
       <Navbar
@@ -94,9 +109,7 @@ const Dashboard = () => {
                   key={"point-card-" + index}
                   index={index}
                   number={number}
-                  handleClick={(data) => {
-                    handleClick(data);
-                  }}
+                  handleClick={() => handleClick(number, index)} // Pass index to handleClick
                 />
               );
             })}
@@ -134,13 +147,17 @@ const Dashboard = () => {
                 <Typography>URL VE KOPYALAMA EKLENECEK</Typography>
               </AccordionDetails>
             </Accordion>
-            <hr></hr>
+            <hr />
             <>
               <Button variant="contained" onClick={handlePause}>
                 Mola İste
               </Button>
-              <Button variant="contained" style={{ marginLeft: "70px" }}>
-                Sonuc Göster
+              <Button
+                variant="contained"
+                style={{ marginLeft: "70px" }}
+                onClick={handleShowResults}
+              >
+                Sonuç Göster
               </Button>
               <OpenSnackbar
                 position={snackbarPosition}
@@ -152,6 +169,12 @@ const Dashboard = () => {
           </Paper>
         </Grid>
       </Grid>
+      <ChartDialog
+        open={dialogOpen}
+        onClose={() => setDialogOpen(false)}
+        xAxisData={numbers}
+        seriesData={clickCounts}
+      />
     </>
   );
 };

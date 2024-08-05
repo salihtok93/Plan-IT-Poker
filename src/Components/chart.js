@@ -1,13 +1,23 @@
 import * as React from "react";
 import { BarChart } from "@mui/x-charts/BarChart";
+import Dialog from "@mui/material/Dialog";
+import DialogTitle from "@mui/material/DialogTitle";
+import DialogContent from "@mui/material/DialogContent";
 
-export default function Chart() {
+const ChartDialog = ({ open, onClose, xAxisData, seriesData }) => {
   return (
-    <BarChart
-      series={[{ data: [35, 44, 24, 34] }]}
-      height={290}
-      xAxis={[{ data: ["0", "1/2", "1", "3"], scaleType: "band" }]}
-      margin={{ top: 10, bottom: 30, left: 40, right: 10 }}
-    />
+    <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
+      <DialogTitle>Grafik</DialogTitle>
+      <DialogContent>
+        <BarChart
+          series={[{ data: seriesData }]}
+          height={290}
+          xAxis={[{ data: xAxisData, scaleType: "band" }]}
+          margin={{ top: 10, bottom: 30, left: 40, right: 10 }}
+        />
+      </DialogContent>
+    </Dialog>
   );
-}
+};
+
+export default ChartDialog;
