@@ -145,7 +145,19 @@ function UserTable({ triger, setUsersP }) {
                 </Avatar>
               </Badge>
             </ListItemAvatar>
-            <ListItemText primary={user.name} />
+            <ListItemText
+              primary={
+                <Typography
+                  fontWeight={
+                    user.id === localStorage.getItem("serverResponse")
+                      ? "bold"
+                      : "normal"
+                  }
+                >
+                  {user.name}
+                </Typography>
+              }
+            />
             {user.status ? null : (
               <DeleteIcon
                 sx={{

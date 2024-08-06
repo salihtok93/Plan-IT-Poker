@@ -186,7 +186,7 @@ const Dashboard = () => {
               }}
             >
               <Typography>Oylamayı başlatmak için "Başlat" tıklayın</Typography>
-              <Button variant="contained" color="info">
+              <Button onClick={startCountdown} variant="contained" color="info">
                 Başlat
               </Button>
             </div>
