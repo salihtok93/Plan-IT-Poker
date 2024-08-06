@@ -74,7 +74,7 @@ function UserRoleCard({ onSubmit }) {
         >
           Kullanıcı Bilgileri
         </Typography>
-        <Typography sx={{ marginTop: "20px", marginBottom: "40px" }}>
+        <div style={{ marginTop: "20px", marginBottom: "40px" }}>
           <TextField
             autoFocus
             margin="dense"
@@ -92,7 +92,7 @@ function UserRoleCard({ onSubmit }) {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
-        </Typography>
+        </div>
 
         <CardActions
           sx={{

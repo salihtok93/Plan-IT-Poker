@@ -1,6 +1,7 @@
 import * as React from "react";
 import { BarChart } from "@mui/x-charts/BarChart";
 import { PieChart } from "@mui/x-charts/PieChart";
+import { Typography } from "@mui/material";
 
 const ChartDialog = ({ xAxisData, seriesData, usersData }) => {
   console.log(seriesData);
@@ -39,17 +40,28 @@ export function PieActiveArc({ xAxisData, usersData }) {
       });
     });
     setData(temp);
-  }, [xAxisData]);
+  }, [xAxisData, usersData]);
   return (
-    <PieChart
-      series={[
-        {
-          data,
-          highlightScope: { faded: "global", highlighted: "item" },
-          faded: { innerRadius: 30, additionalRadius: -30, color: "gray" },
-        },
-      ]}
-      height={200}
-    />
+    <div style={{ height: 300, width: "100%" }}>
+      <PieChart
+        series={[
+          {
+            data,
+            highlightScope: { faded: "global", highlighted: "item" },
+            faded: { innerRadius: 30, additionalRadius: -30, color: "gray" },
+          },
+        ]}
+        height={200}
+      />
+      <Typography
+        style={{
+          display: "flex",
+          alignItems: "center",
+          flexWrap: "wrap",
+        }}
+      >
+        Avarage değer:
+      </Typography>
+    </div>
   );
 }

@@ -29,6 +29,7 @@ export default function Navbar({ setTrigger }) {
     localStorage.removeItem("serverResponse");
     window.location.reload();
   };
+
   const checkLog = () => {
     if (localStorage.getItem("serverResponse")) {
       setIsLoggedIn(false);
@@ -36,6 +37,7 @@ export default function Navbar({ setTrigger }) {
       setIsLoggedIn(true);
     }
   };
+
   React.useEffect(() => {
     checkLog();
   }, []);
@@ -47,22 +49,21 @@ export default function Navbar({ setTrigger }) {
         sx={{ backgroundColor: "#fff", marginBottom: 2 }}
       >
         <Toolbar>
-          <Link to="/">
-            <IconButton
-              size="large"
-              edge="start"
-              color="black"
-              aria-label="logo"
-              sx={{ mr: 2 }}
-              to="/"
-            >
-              <img
-                src={"/samm_logo.png"}
-                alt="Logo"
-                style={{ height: "40px", width: "auto" }}
-              />
-            </IconButton>
-          </Link>
+          <IconButton
+            size="large"
+            edge="start"
+            color="black"
+            aria-label="logo"
+            sx={{ mr: 2 }}
+            component={Link}
+            to="/"
+          >
+            <img
+              src={"/samm_logo.png"}
+              alt="Logo"
+              style={{ height: "40px", width: "auto" }}
+            />
+          </IconButton>
           <Typography
             variant="h6"
             component="div"
@@ -73,22 +74,18 @@ export default function Navbar({ setTrigger }) {
               Home
             </Link>
             {isLoggedIn && (
-              <>
-                <Link style={{ margin: "10px" }} to="/register">
-                  Register
-                </Link>
-              </>
+              <Link style={{ margin: "10px" }} to="/register">
+                Register
+              </Link>
             )}
             {!isLoggedIn && (
-              <>
-                <Link
-                  onClick={handleLogOut}
-                  style={{ margin: "10px" }}
-                  to="/register"
-                >
-                  Çıkış
-                </Link>
-              </>
+              <Link
+                onClick={handleLogOut}
+                style={{ margin: "10px" }}
+                to="/register"
+              >
+                Çıkış
+              </Link>
             )}
           </Typography>
         </Toolbar>

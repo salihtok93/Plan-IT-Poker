@@ -3,7 +3,7 @@ import { Button, Grid, Paper, Typography } from "@mui/material";
 import Accordion from "@mui/material/Accordion";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import AccordionSummary from "@mui/material/AccordionSummary";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { PointCard } from "../Components/pointCard";
 import Usertable from "../Components/userTable";
 import { socket } from "../Services/socket";
@@ -12,14 +12,15 @@ import { updateVote } from "../Services/voteService";
 import { updateStatus } from "../Services/userService";
 import ElmoDialog from "../Components/elmoDialog";
 import Choice from "../Components/choice";
+
 const Dashboard = () => {
   const numbers = [0, 1, 2, 3, 5, 8, 13, 20, 40, 100, "?"];
   const [triger, setTrigger] = useState(0);
-  const [dialogOpen, setDialogOpen] = useState(false);
+  const [openchart, setOpenchart] = useState(false);
   const [selectedVote, setSelectedVote] = useState(null);
   const userId = localStorage.getItem("serverResponse");
   const [openElmo, setOpenElmo] = useState(false);
-  const [showPointCards, setShowPointCards] = useState(true); // PointCard görünürlüğü için durum
+  const [showPointCards, setShowPointCards] = useState(true);
 
   const initialSeconds = 60;
   const [seconds, setSeconds] = useState(initialSeconds);
@@ -36,11 +37,11 @@ const Dashboard = () => {
     } else {
       clearInterval(interval);
       if (seconds === 0) {
-        setIsActive(false); // Geri sayım bitince aktif durumu kapat
+        setIsActive(false);
       }
     }
 
-    return () => clearInterval(interval); // Temizlik işlemi
+    return () => clearInterval(interval);
   }, [isActive, seconds]);
 
   const startCountdown = () => {
@@ -58,13 +59,13 @@ const Dashboard = () => {
   };
 
   const handleShowResults = () => {
-    setDialogOpen(true);
+    setOpenchart(true);
     setShowPointCards(false);
   };
 
   const handleShowCard = () => {
     setShowPointCards(true);
-    setDialogOpen(false);
+    setOpenchart(false);
   };
 
   const handleClick = (number) => {
@@ -82,33 +83,16 @@ const Dashboard = () => {
     console.log("pause tıklandı");
     socket.emit("break request");
   };
+
   useEffect(() => {
     console.log(triger);
   }, [triger]);
 
-  useEffect(() => {
-    console.log("TEST");
-
-    socket.on("break notification", onNotification);
-    socket.on("connect", onConnect);
-    socket.on("disconnect", onDisconnect);
-    socket.on("user list", onNewUser);
-    socket.on("update score", onUpdateScore);
-
-    return () => {
-      socket.off("break notification", onNotification);
-      socket.off("connect", onConnect);
-      socket.off("disconnect", onDisconnect);
-      socket.off("user list", onNewUser);
-      socket.off("update score", onUpdateScore);
-    };
+  const onConnect = useCallback(() => {
+    console.log("CONNECTED ");
   }, []);
 
-  const onConnect = () => {
-    console.log("CONNECTED ");
-  };
-
-  const onDisconnect = () => {
+  const onDisconnect = useCallback(() => {
     console.log("onDisconnect ");
     updateStatus({ userId: userId })
       .then((res) => {
@@ -118,21 +102,32 @@ const Dashboard = () => {
         console.log(err);
       });
     setTrigger((t) => t + 1);
-  };
+  }, [userId]);
 
-  const onNewUser = () => {
-    console.log("yeni kullanıcı");
+  const onNewUser = useCallback(() => {
+    console.log("UserList Dinleniyor");
     setTrigger((t) => t + 1);
-  };
+  }, []);
 
-  const onNotification = () => {
+  const onNotification = useCallback(() => {
     setOpenElmo(true);
-  };
+  }, []);
 
-  const onUpdateScore = ({ userId, score }) => {
-    console.log(`Kullanıcı ${userId} puanını ${score} olarak güncelledi`);
-    setTrigger((t) => t + 1);
-  };
+  useEffect(() => {
+    console.log("TEST");
+
+    socket.on("break notification", onNotification);
+    socket.on("connect", onConnect);
+    socket.on("disconnect", onDisconnect);
+    socket.on("user list", onNewUser);
+
+    return () => {
+      socket.off("break notification", onNotification);
+      socket.off("connect", onConnect);
+      socket.off("disconnect", onDisconnect);
+      socket.off("user list", onNewUser);
+    };
+  }, [onNotification, onConnect, onDisconnect, onNewUser]);
 
   const [usersData, setUsersData] = useState([]);
 
@@ -151,7 +146,7 @@ const Dashboard = () => {
       <Grid container spacing={3} style={{ padding: "20px" }}>
         <Grid item lg={8} sm={8}>
           <Grid container spacing={2} style={{ marginBottom: "24px" }}>
-            {dialogOpen ? (
+            {openchart ? (
               <PieActiveArc xAxisData={numbers} usersData={usersData} />
             ) : (
               showPointCards &&
@@ -174,7 +169,7 @@ const Dashboard = () => {
               ))
             )}
           </Grid>
-          {!dialogOpen && <Choice />}
+          {!openchart && <Choice />}
         </Grid>
         <Grid item lg={3} sm={8}>
           <Paper elevation={3} style={{ padding: 16 }}>
@@ -209,35 +204,39 @@ const Dashboard = () => {
                 <Typography>Takım Arkadaşı davet et</Typography>
               </AccordionSummary>
               <AccordionDetails>
-                <Typography>URL VE KOPYALAMA EKLENECEK</Typography>
+                <Typography>{process.env.REACT_APP_BASE}</Typography>
               </AccordionDetails>
             </Accordion>
             <hr />
-            <>
-              <Button variant="contained" onClick={handlePause}>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                flexWrap: "wrap",
+                gap: "10px",
+              }}
+            >
+              <Button
+                variant="contained"
+                onClick={handlePause}
+                aria-hidden={!showPointCards}
+              >
                 Mola İste
               </Button>
 
               {showPointCards && (
-                <Button
-                  variant="contained"
-                  style={{ marginLeft: "70px" }}
-                  onClick={handleShowResults}
-                >
+                <Button variant="contained" onClick={handleShowResults}>
                   Sonuç Göster
                 </Button>
               )}
 
-              {dialogOpen && ( // Sadece sonuç gösterildiğinde "Kartları göster" butonunu göster
-                <Button
-                  variant="contained"
-                  style={{ marginLeft: "70px" }}
-                  onClick={handleShowCard}
-                >
-                  Kart göster
+              {openchart && (
+                <Button variant="contained" onClick={handleShowCard}>
+                  Kart Göster
                 </Button>
               )}
-            </>
+            </div>
           </Paper>
         </Grid>
       </Grid>

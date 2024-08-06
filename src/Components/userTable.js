@@ -40,7 +40,7 @@ function UserTable({ triger, setUsersP }) {
 
   useEffect(() => {
     setUsersP(users);
-  }, [users]);
+  }, [users, setUsersP]);
 
   useEffect(() => {
     fetchUsers();
