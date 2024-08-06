@@ -1,5 +1,5 @@
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
-import { Button, ButtonBase, Grid, Paper, Typography } from "@mui/material";
+import { Button, Grid, Paper, Typography } from "@mui/material";
 import Accordion from "@mui/material/Accordion";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import AccordionSummary from "@mui/material/AccordionSummary";
@@ -9,7 +9,7 @@ import { PointCard } from "../Components/pointCard";
 import Usertable from "../Components/userTable";
 import { socket } from "../Services/socket";
 import OpenSnackbar from "../Components/snackbar";
-import ChartDialog, { PieActiveArc } from "../Components/chart";
+import { PieActiveArc } from "../Components/chart";
 import { updateVote } from "../Services/voteService";
 import { updateStatus } from "../Services/userService";
 import ElmoDialog from "../Components/elmoDialog";
@@ -19,7 +19,7 @@ const Dashboard = () => {
   // const [clickCounts, setClickCounts] = useState(
   //   new Array(numbers.length).fill(0)
   // );
-  const clickCounts = [0, 0, 0, 3, 4, 0, 0, 0, 0, 0, 0, 0];
+  // const clickCounts = [0, 0, 0, 3, 4, 0, 0, 0, 0, 0, 0, 0];
   const [triger, setTrigger] = useState(0);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedVote, setSelectedVote] = useState(null);
@@ -126,17 +126,21 @@ const Dashboard = () => {
               //   usersData={usersData}
               // />
               numbers.map((number, index) => (
-                <ButtonBase
+                <Grid
+                  item
+                  lg={3}
+                  md={3}
+                  sm={4}
+                  xs={6}
                   key={"point-card-" + index}
                   onClick={() => handleClick(number, index)}
                 >
                   <PointCard
-                    key={"point-card-" + index}
                     index={index}
                     number={number}
                     selected={selectedVote === number}
                   />
-                </ButtonBase>
+                </Grid>
               ))
             )}
           </Grid>
