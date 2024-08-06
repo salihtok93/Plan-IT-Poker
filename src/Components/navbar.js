@@ -33,7 +33,7 @@ export default function Navbar({ setTrigger }) {
             component="div"
             sx={{ flexGrow: 1, color: "black" }}
           >
-            PlanITPoker
+            SammITPoker
             <Link style={{ margin: "10px" }} to="/home">
               Home
             </Link>

@@ -8,7 +8,6 @@ import Choice from "../Components/choice";
 import { PointCard } from "../Components/pointCard";
 import Usertable from "../Components/userTable";
 import { socket } from "../Services/socket";
-import OpenSnackbar from "../Components/snackbar";
 import { PieActiveArc } from "../Components/chart";
 import { updateVote } from "../Services/voteService";
 import { updateStatus } from "../Services/userService";
@@ -16,24 +15,25 @@ import ElmoDialog from "../Components/elmoDialog";
 
 const Dashboard = () => {
   const numbers = [0, 1, 2, 3, 5, 8, 13, 20, 40, 100, "?"];
-  // const [clickCounts, setClickCounts] = useState(
-  //   new Array(numbers.length).fill(0)
-  // );
-  // const clickCounts = [0, 0, 0, 3, 4, 0, 0, 0, 0, 0, 0, 0];
   const [triger, setTrigger] = useState(0);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedVote, setSelectedVote] = useState(null);
   const userId = localStorage.getItem("serverResponse");
   const [openElmo, setOpenElmo] = useState(false);
+  const [showPointCards, setShowPointCards] = useState(true); // PointCard görünürlüğü için durum
 
   const handleShowResults = () => {
     setDialogOpen(true);
+    setShowPointCards(false);
+  };
+
+  const handleShowCard = () => {
+    setShowPointCards(true);
+    setDialogOpen(false);
   };
 
   const handleClick = (number) => {
     setSelectedVote(number);
-    // Kullanıcının puanını güncelleme olayını sunucuya gönder
-
     updateVote({ userId: userId, score: number })
       .then((res) => {
         console.log(res);
@@ -47,15 +47,6 @@ const Dashboard = () => {
     console.log("pause tıklandı");
     socket.emit("break request");
   };
-
-  const [snackbarPosition, setSnackbarPosition] = useState("bottom");
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState("");
-
-  const handleSnackbarClose = () => {
-    setSnackbarOpen(false);
-  };
-
   useEffect(() => {
     console.log(triger);
   }, [triger]);
@@ -105,7 +96,6 @@ const Dashboard = () => {
 
   const onUpdateScore = ({ userId, score }) => {
     console.log(`Kullanıcı ${userId} puanını ${score} olarak güncelledi`);
-    // Yerel kullanıcı durumunu güncelleme fonksiyonunu çağır
     setTrigger((t) => t + 1);
   };
 
@@ -120,11 +110,7 @@ const Dashboard = () => {
             {dialogOpen ? (
               <PieActiveArc xAxisData={numbers} usersData={usersData} />
             ) : (
-              // <ChartDialog
-              //   xAxisData={numbers}
-              //   seriesData={clickCounts}
-              //   usersData={usersData}
-              // />
+              showPointCards &&
               numbers.map((number, index) => (
                 <Grid
                   item
@@ -187,19 +173,26 @@ const Dashboard = () => {
               <Button variant="contained" onClick={handlePause}>
                 Mola İste
               </Button>
-              <Button
-                variant="contained"
-                style={{ marginLeft: "70px" }}
-                onClick={handleShowResults}
-              >
-                Sonuç Göster
-              </Button>
-              <OpenSnackbar
-                position={snackbarPosition}
-                open={snackbarOpen}
-                message={snackbarMessage}
-                onClose={handleSnackbarClose}
-              />
+
+              {showPointCards && (
+                <Button
+                  variant="contained"
+                  style={{ marginLeft: "70px" }}
+                  onClick={handleShowResults}
+                >
+                  Sonuç Göster
+                </Button>
+              )}
+
+              {dialogOpen && ( // Sadece sonuç gösterildiğinde "Kartları göster" butonunu göster
+                <Button
+                  variant="contained"
+                  style={{ marginLeft: "70px" }}
+                  onClick={handleShowCard}
+                >
+                  Kart göster
+                </Button>
+              )}
             </>
           </Paper>
         </Grid>
