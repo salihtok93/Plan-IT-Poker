@@ -18,6 +18,12 @@ export const updateUser = ({ userId, newRole }) => {
   });
 };
 
+export const updateStatus = ({ userId }) => {
+  return axios.post(`${BASE}${USERS}/update-status`, {
+    userId: userId,
+  });
+};
+
 export const fetchUser = () => {
   console.log("sdfgsdfgsdfgs");
   return axios.get(`${BASE}${USERS}`);

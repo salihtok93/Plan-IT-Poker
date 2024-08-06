@@ -47,7 +47,7 @@ function UserRoleCard({ onSubmit }) {
     registerUser({ name: name, email: email })
       .then((res) => {
         console.log(res);
-        localStorage.setItem("serverResponse", JSON.stringify(res.data.id));
+        localStorage.setItem("serverResponse", res.data.id);
         handleCancel();
         setSnackbarMessage("Kullanıcı başarıyla eklendi!");
         setSnackbarSeverity("success");

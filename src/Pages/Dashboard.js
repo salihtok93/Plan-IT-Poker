@@ -1,5 +1,5 @@
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
-import { Button, Grid, Paper, Typography } from "@mui/material";
+import { Button, ButtonBase, Grid, Paper, Typography } from "@mui/material";
 import Accordion from "@mui/material/Accordion";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import AccordionSummary from "@mui/material/AccordionSummary";
@@ -10,12 +10,15 @@ import Usertable from "../Components/userTable";
 import { socket } from "../Services/socket";
 import OpenSnackbar from "../Components/snackbar";
 import ChartDialog from "../Components/chart";
+import { updateVote } from "../Services/voteService";
+import { updateStatus } from "../Services/userService";
 
 const Dashboard = () => {
   const numbers = [0, 1, 2, 3, 5, 8, 13, 20, 40, 100, "?"];
-  const [clickCounts, setClickCounts] = useState(
-    new Array(numbers.length).fill(0)
-  );
+  // const [clickCounts, setClickCounts] = useState(
+  //   new Array(numbers.length).fill(0)
+  // );
+  const clickCounts = [0, 0, 0, 3, 4, 0, 0, 0, 0, 0, 0, 0];
   const [triger, setTrigger] = useState(0);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedVote, setSelectedVote] = useState(null);
@@ -25,23 +28,17 @@ const Dashboard = () => {
     setDialogOpen(true);
   };
 
-  const handleClick = (number, index) => {
-    if (selectedVote !== null) return; // Birden fazla oylamayı engelle
-
-    console.log("Paper clicked!", number);
-
-    // clickCounts değerlerini güncelle
-    setClickCounts((prevCounts) => {
-      const newCounts = [...prevCounts];
-      newCounts[index] += 1;
-      return newCounts;
-    });
-
-    // Seçilen oyu ayarla
-    setSelectedVote(index);
-
+  const handleClick = (number) => {
+    setSelectedVote(number);
     // Kullanıcının puanını güncelleme olayını sunucuya gönder
-    socket.emit("update user score", { userId, score: number });
+
+    updateVote({ userId: userId, score: number })
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   const handlePause = () => {
@@ -63,32 +60,6 @@ const Dashboard = () => {
 
   useEffect(() => {
     console.log("TEST");
-    function onConnect() {
-      console.log("CONNECTED ");
-    }
-
-    function onDisconnect() {
-      console.log("onDisconnect ");
-      setTrigger((t) => t + 1);
-    }
-
-    function onNewUser() {
-      console.log("yeni kullanıcı");
-      setTrigger((t) => t + 1);
-    }
-
-    function onNotification() {
-      console.log("Mola isteği geldi");
-      setSnackbarMessage("Elmo!");
-      setSnackbarPosition("center");
-      setSnackbarOpen(true);
-    }
-
-    function onUpdateScore({ userId, score }) {
-      console.log(`Kullanıcı ${userId} puanını ${score} olarak güncelledi`);
-      // Yerel kullanıcı durumunu güncelleme fonksiyonunu çağır
-      setTrigger((t) => t + 1);
-    }
 
     socket.on("break notification", onNotification);
     socket.on("connect", onConnect);
@@ -103,7 +74,41 @@ const Dashboard = () => {
       socket.off("user list", onNewUser);
       socket.off("update score", onUpdateScore);
     };
-  }, [userId]);
+  }, []);
+
+  const onConnect = () => {
+    console.log("CONNECTED ");
+  };
+
+  const onDisconnect = () => {
+    console.log("onDisconnect ");
+    updateStatus({ userId: userId })
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    setTrigger((t) => t + 1);
+  };
+
+  const onNewUser = () => {
+    console.log("yeni kullanıcı");
+    setTrigger((t) => t + 1);
+  };
+
+  const onNotification = () => {
+    console.log("Mola isteği geldi");
+    setSnackbarMessage("Elmo!");
+    setSnackbarPosition("center");
+    setSnackbarOpen(true);
+  };
+
+  const onUpdateScore = ({ userId, score }) => {
+    console.log(`Kullanıcı ${userId} puanını ${score} olarak güncelledi`);
+    // Yerel kullanıcı durumunu güncelleme fonksiyonunu çağır
+    setTrigger((t) => t + 1);
+  };
 
   return (
     <>
@@ -114,13 +119,17 @@ const Dashboard = () => {
               <ChartDialog xAxisData={numbers} seriesData={clickCounts} />
             ) : (
               numbers.map((number, index) => (
-                <PointCard
+                <ButtonBase
                   key={"point-card-" + index}
-                  index={index}
-                  number={number}
-                  handleClick={() => handleClick(number, index)}
-                  selected={selectedVote === index}
-                />
+                  onClick={() => handleClick(number, index)}
+                >
+                  <PointCard
+                    key={"point-card-" + index}
+                    index={index}
+                    number={number}
+                    selected={selectedVote === number}
+                  />
+                </ButtonBase>
               ))
             )}
           </Grid>

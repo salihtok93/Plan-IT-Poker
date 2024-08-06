@@ -1,11 +1,10 @@
 import { Grid, Paper, Typography } from "@mui/material";
 import React from "react";
 
-export const PointCard = ({ number, handleClick, index, selected }) => {
+export const PointCard = ({ number, index, selected }) => {
   return (
     <Grid item lg={3} md={3} sm={4} xs={6} key={index}>
       <Paper
-        onClick={() => handleClick(number)}
         sx={{
           padding: "16px",
           backgroundColor: selected ? "lightblue" : "white",

@@ -4,7 +4,7 @@ import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import IconButton from "@mui/material/IconButton";
-import Register from "../Components/Register";
+// import Register from "../Components/Register";
 import { Link } from "react-router-dom";
 
 export default function Navbar({ setTrigger }) {
@@ -48,11 +48,11 @@ export default function Navbar({ setTrigger }) {
             </Link>
           </Typography>
 
-          <Register
+          {/* <Register
             setTrigger={() => {
               setTrigger();
             }}
-          />
+          /> */}
         </Toolbar>
       </AppBar>
     </Box>
