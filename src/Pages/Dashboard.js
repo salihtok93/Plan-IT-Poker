@@ -9,9 +9,10 @@ import { PointCard } from "../Components/pointCard";
 import Usertable from "../Components/userTable";
 import { socket } from "../Services/socket";
 import OpenSnackbar from "../Components/snackbar";
-import ChartDialog from "../Components/chart";
+import ChartDialog, { PieActiveArc } from "../Components/chart";
 import { updateVote } from "../Services/voteService";
 import { updateStatus } from "../Services/userService";
+import ElmoDialog from "../Components/elmoDialog";
 
 const Dashboard = () => {
   const numbers = [0, 1, 2, 3, 5, 8, 13, 20, 40, 100, "?"];
@@ -23,6 +24,7 @@ const Dashboard = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedVote, setSelectedVote] = useState(null);
   const userId = localStorage.getItem("serverResponse");
+  const [openElmo, setOpenElmo] = useState(false);
 
   const handleShowResults = () => {
     setDialogOpen(true);
@@ -98,10 +100,7 @@ const Dashboard = () => {
   };
 
   const onNotification = () => {
-    console.log("Mola isteği geldi");
-    setSnackbarMessage("Elmo!");
-    setSnackbarPosition("center");
-    setSnackbarOpen(true);
+    setOpenElmo(true);
   };
 
   const onUpdateScore = ({ userId, score }) => {
@@ -110,14 +109,22 @@ const Dashboard = () => {
     setTrigger((t) => t + 1);
   };
 
+  const [usersData, setUsersData] = useState([]);
+
   return (
     <>
+      <ElmoDialog open={openElmo} setOpen={(data) => setOpenElmo(data)} />
       <Grid container spacing={3} style={{ padding: "20px" }}>
         <Grid item lg={8} sm={8}>
           <Grid container spacing={2} style={{ marginBottom: "24px" }}>
             {dialogOpen ? (
-              <ChartDialog xAxisData={numbers} seriesData={clickCounts} />
+              <PieActiveArc xAxisData={numbers} usersData={usersData} />
             ) : (
+              // <ChartDialog
+              //   xAxisData={numbers}
+              //   seriesData={clickCounts}
+              //   usersData={usersData}
+              // />
               numbers.map((number, index) => (
                 <ButtonBase
                   key={"point-card-" + index}
@@ -152,7 +159,12 @@ const Dashboard = () => {
             <hr />
             <Typography>Oyuncular</Typography>
             <hr />
-            <Usertable triger={triger} />
+            <Usertable
+              triger={triger}
+              setUsersP={(usersData) => {
+                setUsersData(usersData);
+              }}
+            />
             <hr />
             <Accordion>
               <AccordionSummary
