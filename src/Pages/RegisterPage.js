@@ -7,7 +7,7 @@ import {
   Typography,
 } from "@mui/material";
 import OpenSnackbar from "../Components/snackbar";
-import { fetchUser, registerUser } from "../Services/userService";
+import { registerUser } from "../Services/userService";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
@@ -18,22 +18,6 @@ function UserRoleCard({ onSubmit }) {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
-
-  
-    //kod çalışmazsa array dizisi mi diye kontrol et
-    const allUsers = fetchUser();
-
-    const userVerification = () => {
-        const lastUserID = localStorage.getItem('serverResponse');
-
-        if(lastUserID) {
-            const valueFound = allUsers.some((user) => user === lastUserID);
-            if(!valueFound) {
-                localStorage.removeItem('serverResponse');
-            }
-        }
-    }
-
 
   const handleSnackbarClose = () => {
     setSnackbarOpen(false);
@@ -49,7 +33,8 @@ function UserRoleCard({ onSubmit }) {
     registerUser({ name: name, email: email })
       .then((res) => {
         console.log(res);
-        localStorage.setItem('serverResponse',JSON.stringify(res.data.id));
+        localStorage.setItem('serverResponse',res.data.id);
+        window.location.reload()
         handleCancel();
         setSnackbarMessage("Kullanıcı başarıyla eklendi!");
         setSnackbarSeverity("success");
@@ -65,7 +50,6 @@ function UserRoleCard({ onSubmit }) {
 
   const handleSubmit = () => {
     handleServerSubmit();
-    userVerification();
   }
 
  

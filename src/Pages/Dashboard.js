@@ -4,11 +4,9 @@ import Accordion from "@mui/material/Accordion";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import React, { useEffect, useState } from "react";
-import Choice from "../Components/choice";
 import { PointCard } from "../Components/pointCard";
 import Usertable from "../Components/userTable";
 import { socket } from "../Services/socket";
-import Navbar from "../Components/navbar";
 import OpenSnackbar from "../Components/snackbar";
 import ChartDialog from "../Components/chart";
 
@@ -20,6 +18,43 @@ const Dashboard = () => {
   const [triger, setTrigger] = useState(0);
   const [dialogOpen, setDialogOpen] = useState(false);
   const userId = localStorage.getItem("userId");
+
+
+  const initialSeconds= 60;
+  const [seconds, setSeconds] = useState(initialSeconds);
+  const [isActive, setIsActive] = useState(false);
+  const [showCounter, setShowCounter] = useState(false);
+  
+  
+
+  useEffect(() => {
+    let interval = null;
+
+    if (isActive && seconds > 0) {
+      interval = setInterval(() => {
+        setSeconds(prevSeconds => prevSeconds - 1);
+      }, 1000);
+    } else {
+      clearInterval(interval);
+      if (seconds === 0) {
+        setIsActive(false); // Geri sayım bitince aktif durumu kapat
+      }
+    }
+
+    return () => clearInterval(interval); // Temizlik işlemi
+  }, [isActive, seconds]);
+
+  const startCountdown = () => {
+    setSeconds(initialSeconds);
+    setIsActive(true);
+    setShowCounter(true);
+  }
+
+  const formatTime = (secs) => {
+    const minutes = Math.floor(secs / 60);
+    const remainingSeconds = secs % 60;
+    return `${String(minutes).padStart(2, '0')}:${String(remainingSeconds).padStart(2, '0')}`;
+  };
 
   const handleShowResults = () => {
     setDialogOpen(true);
@@ -95,10 +130,13 @@ const Dashboard = () => {
 
   return (
     <>
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+        {showCounter && <h1>{formatTime(seconds)}</h1>}
+      </div>
       <Grid
         container
         spacing={3}
-        style={{ marginLeft: "20px", padding: "20px" }}
+        style={{ padding: "20px" }}
       >
         <Grid item lg={8} sm={8}>
           <Grid container spacing={2} style={{ marginBottom: "24px" }}>
@@ -114,7 +152,8 @@ const Dashboard = () => {
                 />
               );
             })}
-          </Grid>
+      </Grid>
+      </Grid>
           <Grid item lg={3} sm={8}>
             <Paper elevation={3} style={{ padding: 16 }}>
               <div
@@ -127,7 +166,7 @@ const Dashboard = () => {
                 <Typography>
                   Oylamayı başlatmak için "Başlat" tıklayın
                 </Typography>
-                <Button variant="contained" color="info">
+                <Button onClick={startCountdown} variant="contained" color="info">
                   Başlat
                 </Button>
               </div>
@@ -176,7 +215,6 @@ const Dashboard = () => {
           xAxisData={numbers}
           seriesData={clickCounts}
         />
-      </Grid>
     </>
   );
 };

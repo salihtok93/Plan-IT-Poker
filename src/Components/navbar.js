@@ -4,10 +4,44 @@ import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import IconButton from "@mui/material/IconButton";
-import Register from "../Components/Register";
 import { Link } from "react-router-dom";
+import { deleteUser } from "../Services/userService";
 
 export default function Navbar({ setTrigger }) {
+
+  const [isLoggedIn,setIsLoggedIn] = React.useState(true);
+  const [userToDelete, setUserToDelete] = React.useState(null);
+
+  React.useEffect(() => {
+    setUserToDelete(localStorage.getItem('serverResponse'))
+  },[])
+
+  const handleLogOut = () => {
+    deleteUser(userToDelete)
+    .then((response) => {
+      console.log("Kullanıcı başarıyla silindi", response.data);  
+    })
+    .catch((error) => {
+      console.error("Kullanıcı silinirken bir hata oluştu", error)
+    })
+    .finally(() => {
+      setUserToDelete(null);
+    })
+    localStorage.removeItem('serverResponse')
+    window.location.reload();
+  
+  } 
+  const checkLog = () => {
+    if(localStorage.getItem('serverResponse')) {
+      setIsLoggedIn(false);
+    } else {
+        setIsLoggedIn(true);
+    }
+  };
+  React.useEffect(() => {
+    checkLog();
+  },[]);
+
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar
@@ -15,12 +49,14 @@ export default function Navbar({ setTrigger }) {
         sx={{ backgroundColor: "#fff", marginBottom: 2 }}
       >
         <Toolbar>
+          <Link to="/">
           <IconButton
             size="large"
             edge="start"
             color="black"
             aria-label="logo"
             sx={{ mr: 2 }}
+            to="/"
           >
             <img
               src={"/samm_logo.png"}
@@ -28,31 +64,36 @@ export default function Navbar({ setTrigger }) {
               style={{ height: "40px", width: "auto" }}
             />
           </IconButton>
+          </Link>
           <Typography
             variant="h6"
             component="div"
             sx={{ flexGrow: 1, color: "black" }}
           >
             PlanITPoker
-            <Link style={{ margin: "10px" }} to="/home">
+            <Link style={{ margin: "10px" }} to="/">
               Home
             </Link>
-            <Link style={{ margin: "10px" }} to="/">
-              Vote
-            </Link>
-            <Link style={{ margin: "10px" }} to="/rooms">
-              Rooms
-            </Link>
-            <Link style={{ margin: "10px" }} to="/register">
-              Register
-            </Link>
-          </Typography>
 
-          <Register
-            setTrigger={() => {
-              setTrigger();
-            }}
-          />
+            {isLoggedIn && (
+              
+              <>
+                <Link style={{ margin: "10px" }} to="/register">
+                  Register
+                </Link>
+            
+            
+              </>)}
+
+            {!isLoggedIn && (
+              <>
+                <Link onClick={handleLogOut} style={{ margin: "10px"}} to="/register">
+                  Çıkış
+                </Link>
+              </>
+            )}
+            
+          </Typography>
         </Toolbar>
       </AppBar>
     </Box>
