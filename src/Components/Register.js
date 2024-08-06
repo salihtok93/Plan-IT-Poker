@@ -36,7 +36,7 @@ function UserRoleDialog({ open, onClose, onSubmit, setTrigger }) {
         setTrigger();
         socket.emit("user list", { name });
         socket.emit("user online", res.data.id);
-        localStorage.setItem("userId", res.data.id);
+        // localStorage.setItem("userId", res.data.id);
         setSnackbarMessage("Kullanıcı başarıyla eklendi!");
         setSnackbarSeverity("success");
         setSnackbarOpen(true);
