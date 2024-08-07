@@ -18,29 +18,40 @@ const ChartDialog = ({ xAxisData, seriesData, usersData }) => {
 
 export default ChartDialog;
 
-// const data = [
-//   { id: 0, value: 10, label: "series A" },
-//   { id: 1, value: 15, label: "series B" },
-//   { id: 2, value: 20, label: "series C" },
-// ];
-
 export function PieActiveArc({ xAxisData, usersData }) {
   const [data, setData] = React.useState([]);
+  const [averageScore, setAverageScore] = React.useState(0); // Yeni state
+
   React.useEffect(() => {
     const temp = [];
-    xAxisData.forEach((element, index) => {
-      console.log(element, usersData);
+    let totalScore = 0;
+    let votersCount = 0;
 
-      console.log(usersData.filter((user) => user.score === element));
+    xAxisData.forEach((element, index) => {
+      const filteredUsers = usersData.filter(
+        (user) => user.score === element && !isNaN(user.score) // burada ? işaretinin hesaba katılmamasını istedik
+      );
+
+      const count = filteredUsers.length;
+      if (count > 0) {
+        totalScore += element * count; // Puanları toplamak için
+        votersCount += count; // Oy veren kişi sayısını artırmak için
+      }
 
       temp.push({
         id: index,
-        value: usersData.filter((user) => user.score === element).length,
+        value: count,
         label: JSON.stringify(element),
       });
     });
+
     setData(temp);
-  }, [xAxisData, usersData]);
+
+    // Ortalamayı hesaplayın ve setAverageScore ile güncelleyin
+    const average = votersCount > 0 ? totalScore / votersCount : 0;
+    setAverageScore(average);
+  }, [xAxisData, usersData]); // usersData'yı da bağımlılık olarak ekledik
+
   return (
     <div style={{ height: 300, width: "100%" }}>
       <PieChart
@@ -60,7 +71,7 @@ export function PieActiveArc({ xAxisData, usersData }) {
           flexWrap: "wrap",
         }}
       >
-        Avarage değer:
+        Avarage değer: {averageScore.toFixed(2)} {/* Ortalamayı göster */}
       </Typography>
     </div>
   );

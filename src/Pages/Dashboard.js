@@ -204,7 +204,7 @@ const Dashboard = () => {
                 <Typography>Takım Arkadaşı davet et</Typography>
               </AccordionSummary>
               <AccordionDetails>
-                <Typography>{process.env.REACT_APP_BASE}</Typography>
+                <Typography>{"http://192.168.102.95:3000"}</Typography>
               </AccordionDetails>
             </Accordion>
             <hr />

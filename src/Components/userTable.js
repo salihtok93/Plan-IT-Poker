@@ -170,7 +170,9 @@ function UserTable({ triger, setUsersP }) {
                 onClick={() => handleDeleteUser(user.id)}
               />
             )}
-            <Typography sx={{ marginLeft: 2 }}>{user.score}</Typography>
+            <Typography sx={{ marginLeft: 2 }}>
+              {user.score === -1 ? null : user.score}
+            </Typography>
           </ListItem>
         ); //score yazma üstte
       })}
