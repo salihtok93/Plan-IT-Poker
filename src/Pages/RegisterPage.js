@@ -34,6 +34,7 @@ function UserRoleCard({ onSubmit }) {
       .then((res) => {
         console.log(res);
         localStorage.setItem("serverResponse", res.data.id);
+        localStorage.setItem("userRole", res.data.role);
         window.location.reload();
         handleCancel();
         setSnackbarMessage("Kullanıcı başarıyla eklendi!");
@@ -103,7 +104,7 @@ function UserRoleCard({ onSubmit }) {
         >
           <Button
             component={Link}
-            to="/home"
+            to="/register"
             onClick={handleCancel}
             color="warning"
           >

@@ -14,6 +14,7 @@ import ElmoDialog from "../Components/elmoDialog";
 import Choice from "../Components/choice";
 
 const Dashboard = () => {
+  const userRole = localStorage.getItem("userRole");
   const numbers = [0, 1, 2, 3, 5, 8, 13, 20, 40, 100, "?"];
   const [triger, setTrigger] = useState(0);
   const [openchart, setOpenchart] = useState(false);
@@ -45,9 +46,14 @@ const Dashboard = () => {
   }, [isActive, seconds]);
 
   const startCountdown = () => {
-    setSeconds(initialSeconds);
-    setIsActive(true);
-    setShowCounter(true);
+    if (userRole === "admin") {
+      socket.emit("startcount");
+    }
+    // if (userRole === "admin") {
+    //   setSeconds(initialSeconds);
+    //   setIsActive(true);
+    //   setShowCounter(true);
+    // }
   };
 
   const formatTime = (secs) => {
@@ -61,11 +67,13 @@ const Dashboard = () => {
   const handleShowResults = () => {
     setOpenchart(true);
     setShowPointCards(false);
+    socket.emit("show results");
   };
 
   const handleShowCard = () => {
     setShowPointCards(true);
     setOpenchart(false);
+    socket.emit("show card");
   };
 
   const handleClick = (number) => {
@@ -112,6 +120,20 @@ const Dashboard = () => {
   const onNotification = useCallback(() => {
     setOpenElmo(true);
   }, []);
+  const onShowresults = useCallback(() => {
+    setOpenchart(true);
+    setShowPointCards(false);
+  }, []);
+
+  const onShowCard = useCallback(() => {
+    setOpenchart(false);
+    setShowPointCards(true);
+  }, []);
+  const onStartCount = useCallback(() => {
+    setSeconds(initialSeconds);
+    setIsActive(true);
+    setShowCounter(true);
+  }, []);
 
   useEffect(() => {
     console.log("TEST");
@@ -120,14 +142,28 @@ const Dashboard = () => {
     socket.on("connect", onConnect);
     socket.on("disconnect", onDisconnect);
     socket.on("user list", onNewUser);
+    socket.on("show-results", onShowresults);
+    socket.on("show-card", onShowCard);
+    socket.on("start-count", onStartCount);
 
     return () => {
       socket.off("break notification", onNotification);
       socket.off("connect", onConnect);
       socket.off("disconnect", onDisconnect);
       socket.off("user list", onNewUser);
+      socket.off("show-results", onShowresults);
+      socket.off("show-card", onShowCard);
+      socket.off("start-count", onStartCount);
     };
-  }, [onNotification, onConnect, onDisconnect, onNewUser]);
+  }, [
+    onNotification,
+    onConnect,
+    onDisconnect,
+    onNewUser,
+    onShowresults,
+    onShowCard,
+    onStartCount,
+  ]);
 
   const [usersData, setUsersData] = useState([]);
 
@@ -189,6 +225,7 @@ const Dashboard = () => {
             <Typography>Oyuncular</Typography>
             <hr />
             <Usertable
+              showScore={openchart}
               triger={triger}
               setUsersP={(usersData) => {
                 setUsersData(usersData);
@@ -225,13 +262,14 @@ const Dashboard = () => {
                 Mola İste
               </Button>
 
-              {showPointCards && (
-                <Button variant="contained" onClick={handleShowResults}>
-                  Sonuç Göster
-                </Button>
-              )}
+              {showPointCards &&
+                userRole === "admin" && ( // Sadece admin için göstermek için localstorage den aldığımız bilgi ile yapıyoruz
+                  <Button variant="contained" onClick={handleShowResults}>
+                    Sonuç Göster
+                  </Button>
+                )}
 
-              {openchart && (
+              {openchart && userRole === "admin" && (
                 <Button variant="contained" onClick={handleShowCard}>
                   Kart Göster
                 </Button>
