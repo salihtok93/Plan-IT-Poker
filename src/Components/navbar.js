@@ -69,9 +69,11 @@ export default function Navbar({ setTrigger }) {
             sx={{ flexGrow: 1, color: "black" }}
           >
             PlanITPoker
-            <Link style={{ margin: "10px" }} to="/">
+            {!isLoggedIn && (
+              <Link style={{ margin: "10px" }} to="/">
               Home
             </Link>
+            )}
             {isLoggedIn && (
               <>
                 <Link style={{ margin: "10px" }} to="/register">

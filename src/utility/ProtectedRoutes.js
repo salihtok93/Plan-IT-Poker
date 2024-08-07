@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
 import { Outlet, Navigate } from "react-router-dom";
 
-const ProtectedRoutes = () => {
-    const [isLoggedIn,setIsLoggedIn] = useState(true);
+function ProtectedRoutes() {
+    const [isLoggedIn,setIsLoggedIn] = useState(false);
 
     const checkLog = () => {
         if(localStorage.getItem('serverResponse')) {
-            setIsLoggedIn(false);
-        } else {
             setIsLoggedIn(true);
+        } else {
+            setIsLoggedIn(false);
         }
     };
     useEffect(() => {
@@ -16,7 +16,7 @@ const ProtectedRoutes = () => {
     },[]);
 
 
-    return isLoggedIn ? <Outlet/> : <Navigate to="/"/>
+    return isLoggedIn === true ? <Outlet/> : <Navigate to="register"/>
 }
 
 export default ProtectedRoutes

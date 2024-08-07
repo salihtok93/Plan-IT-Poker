@@ -21,10 +21,11 @@ const Dashboard = () => {
   const [openElmo, setOpenElmo] = useState(false);
   const [showPointCards, setShowPointCards] = useState(true); // PointCard görünürlüğü için durum
 
-  const initialSeconds = 60;
+  const initialSeconds = 10;
   const [seconds, setSeconds] = useState(initialSeconds);
   const [isActive, setIsActive] = useState(false);
   const [showCounter, setShowCounter] = useState(false);
+  const [isSelectionLocked, setIsSelectionLocked] = useState(true);
 
   useEffect(() => {
     let interval = null;
@@ -37,6 +38,7 @@ const Dashboard = () => {
       clearInterval(interval);
       if (seconds === 0) {
         setIsActive(false); // Geri sayım bitince aktif durumu kapat
+        setIsSelectionLocked(true)
       }
     }
 
@@ -47,6 +49,8 @@ const Dashboard = () => {
     setSeconds(initialSeconds);
     setIsActive(true);
     setShowCounter(true);
+    setSelectedVote(null);
+    setIsSelectionLocked(false);
   };
 
   const formatTime = (secs) => {
@@ -68,14 +72,16 @@ const Dashboard = () => {
   };
 
   const handleClick = (number) => {
-    setSelectedVote(number);
-    updateVote({ userId: userId, score: number })
-      .then((res) => {
-        console.log(res);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    if(!isSelectionLocked){
+      setSelectedVote(number);
+      updateVote({ userId: userId, score: number })
+        .then((res) => {
+          console.log(res);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
   };
 
   const handlePause = () => {
@@ -186,9 +192,9 @@ const Dashboard = () => {
               }}
             >
               <Typography>Oylamayı başlatmak için "Başlat" tıklayın</Typography>
-              <Button variant="contained" color="info">
-                Başlat
-              </Button>
+              <Button onClick={startCountdown} variant="contained" color="info">
+                  Başlat
+                </Button>
             </div>
             <hr />
             <Typography>Oyuncular</Typography>

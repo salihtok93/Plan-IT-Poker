@@ -103,7 +103,7 @@ function UserRoleCard({ onSubmit }) {
         >
           <Button
             component={Link}
-            to="/home"
+            to="/register"
             onClick={handleCancel}
             color="warning"
           >
