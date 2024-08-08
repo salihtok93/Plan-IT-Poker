@@ -19,7 +19,8 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { deleteUser, fetchUser, updateUser } from "../Services/userService";
 import OpenSnackbar from "./snackbar";
 
-function UserTable({ triger, setUsersP }) {
+function UserTable({ triger, setUsersP, showScore }) {
+  const userRole = localStorage.getItem("userRole");
   const [users, setUsers] = useState([]);
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
@@ -40,7 +41,7 @@ function UserTable({ triger, setUsersP }) {
 
   useEffect(() => {
     setUsersP(users);
-  }, [users]);
+  }, [users, setUsersP]);
 
   useEffect(() => {
     fetchUsers();
@@ -95,6 +96,7 @@ function UserTable({ triger, setUsersP }) {
           .then((res) => {
             console.log(res);
             fetchUsers();
+            localStorage.setItem("userRole", newRole);
             setSnackbarMessage(
               `${selectedUser.name} kullanıcısının rolü başarıyla güncellendi!`
             );
@@ -145,7 +147,19 @@ function UserTable({ triger, setUsersP }) {
                 </Avatar>
               </Badge>
             </ListItemAvatar>
-            <ListItemText primary={user.name} />
+            <ListItemText
+              primary={
+                <Typography
+                  fontWeight={
+                    user.id === localStorage.getItem("serverResponse")
+                      ? "bold"
+                      : "normal"
+                  }
+                >
+                  {user.name}
+                </Typography>
+              }
+            />
             {user.status ? null : (
               <DeleteIcon
                 sx={{
@@ -158,7 +172,11 @@ function UserTable({ triger, setUsersP }) {
                 onClick={() => handleDeleteUser(user.id)}
               />
             )}
-            <Typography sx={{ marginLeft: 2 }}>{user.score}</Typography>
+            {showScore && ( // eğer dashborddan gelen değer true ise score gözükür -1 yani hiç oy verilmemişse de gözükmez
+              <Typography sx={{ marginLeft: 2 }}>
+                {user.score === -1 ? null : user.score}
+              </Typography>
+            )}
           </ListItem>
         ); //score yazma üstte
       })}
@@ -194,7 +212,9 @@ function UserTable({ triger, setUsersP }) {
               </Typography>
             </>
           )}
-          <Button onClick={updateRole}>Rolü Değiştir</Button>
+          {userRole === "admin" && (
+            <Button onClick={updateRole}>Rolü Değiştir</Button>
+          )}
         </DialogContent>
         <DialogActions></DialogActions>
       </Dialog>

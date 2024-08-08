@@ -25,7 +25,7 @@ export const updateStatus = ({ userId }) => {
 };
 
 export const fetchUser = () => {
-  console.log("sdfgsdfgsdfgs");
+  console.log("Fetch User userService.js");
   return axios.get(`${BASE}${USERS}`);
 };
 
