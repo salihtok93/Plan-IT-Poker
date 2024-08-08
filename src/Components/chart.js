@@ -1,9 +1,8 @@
 import * as React from "react";
 import { BarChart } from "@mui/x-charts/BarChart";
 import { PieChart } from "@mui/x-charts/PieChart";
-import { Typography } from "@mui/material";
 
-const ChartDialog = ({ xAxisData, seriesData, usersData }) => {
+const ChartDialog = ({ xAxisData, seriesData }) => {
   console.log(seriesData);
 
   return (
@@ -21,6 +20,7 @@ export default ChartDialog;
 export function PieActiveArc({ xAxisData, usersData }) {
   const [data, setData] = React.useState([]);
   const [averageScore, setAverageScore] = React.useState(0); // Yeni state
+  console.log(averageScore.toFixed(2));
 
   React.useEffect(() => {
     const temp = [];
@@ -64,15 +64,6 @@ export function PieActiveArc({ xAxisData, usersData }) {
         ]}
         height={380}
       />
-      <Typography
-        style={{
-          display: "flex",
-          alignItems: "center",
-          flexWrap: "wrap",
-        }}
-      >
-        Ortalama değer: {averageScore.toFixed(2)} {/* Ortalamayı göster */}
-      </Typography>
     </div>
   );
 }

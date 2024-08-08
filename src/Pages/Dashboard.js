@@ -1,5 +1,14 @@
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
-import { Alert, Button, Grid, MenuItem, Paper, Select, Snackbar, Typography } from "@mui/material";
+import {
+  Alert,
+  Button,
+  Grid,
+  MenuItem,
+  Paper,
+  Select,
+  Snackbar,
+  Typography,
+} from "@mui/material";
 import Accordion from "@mui/material/Accordion";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import AccordionSummary from "@mui/material/AccordionSummary";
@@ -9,10 +18,10 @@ import Usertable from "../Components/userTable";
 import { socket } from "../Services/socket";
 import { PieActiveArc } from "../Components/chart";
 import { updateVote } from "../Services/voteService";
-import { updateStatus } from "../Services/userService";
 import ElmoDialog from "../Components/elmoDialog";
 import Choice from "../Components/choice";
-
+import { CardElmo } from "../Components/cardElmo";
+import BreakDialog from "../Components/breakDialog";
 
 const Dashboard = () => {
   const userRole = localStorage.getItem("userRole");
@@ -22,8 +31,9 @@ const Dashboard = () => {
   const [selectedVote, setSelectedVote] = useState(null);
   const userId = localStorage.getItem("serverResponse");
   const [openElmo, setOpenElmo] = useState(false);
+  const [openBreak, setOpenBreak] = useState(false);
   const [showPointCards, setShowPointCards] = useState(true);
-  const [selectedTime, setSelectedTime] = useState(15);// geri sayma başlangıcı
+  const [selectedTime, setSelectedTime] = useState(15); // geri sayma başlangıcı
   const [seconds, setSeconds] = useState(0);
   const [isActive, setIsActive] = useState(false);
   const [showCounter, setShowCounter] = useState(false);
@@ -47,14 +57,14 @@ const Dashboard = () => {
     return () => clearInterval(interval);
   }, [isActive, seconds]);
 
-
   const startCountdown = () => {
     if (userRole === "admin") {
       setSeconds(selectedTime);
       setIsActive(true);
       setShowCounter(true);
-      setIsSelectionLocked(false);
-      socket.emit("startcount");
+      setSelectedVote(null);
+      // setIsSelectionLocked(false);
+      socket.emit("startcount", selectedTime);
     }
   };
 
@@ -64,6 +74,9 @@ const Dashboard = () => {
     return `${String(minutes).padStart(2, "0")}:${String(
       remainingSeconds
     ).padStart(2, "0")}`;
+  };
+  const onYetoClick = () => {
+    socket.emit("elmo-req");
   };
 
   const handleShowResults = () => {
@@ -99,12 +112,12 @@ const Dashboard = () => {
   };
 
   const resetVotes = () => {
-    setSelectedVote(null); // backhende de sıfırlanması lazım
-  }
+    socket.emit("voteReset");
+  };
 
   const handleSnackbarClose = () => {
     setOpen(false);
-  }
+  };
 
   useEffect(() => {
     console.log(triger);
@@ -114,17 +127,17 @@ const Dashboard = () => {
     console.log("CONNECTED ");
   }, []);
 
-  const onDisconnect = useCallback(() => {
-    console.log("onDisconnect ");
-    updateStatus({ userId: userId })
-      .then((res) => {
-        console.log(res);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-    setTrigger((t) => t + 1);
-  }, [userId]);
+  // const onDisconnect = useCallback(() => {
+  //   console.log("onDisconnect ");
+  //   updateStatus({ userId: userId })
+  //     .then((res) => {
+  //       console.log(res);
+  //     })
+  //     .catch((err) => {
+  //       console.log(err);
+  //     });
+  //   setTrigger((t) => t + 1);
+  // }, [userId]);
 
   const onNewUser = useCallback(() => {
     console.log("UserList Dinleniyor");
@@ -132,11 +145,17 @@ const Dashboard = () => {
   }, []);
 
   const onNotification = useCallback(() => {
+    setOpenBreak(true);
+  }, []);
+  const onElmo = useCallback(() => {
     setOpenElmo(true);
   }, []);
   const onShowresults = useCallback(() => {
     setOpenchart(true);
     setShowPointCards(false);
+    setIsActive(false);
+    setShowCounter(false);
+    setIsSelectionLocked(true);
   }, []);
 
   const onShowCard = useCallback(() => {
@@ -144,41 +163,47 @@ const Dashboard = () => {
     setShowPointCards(true);
     setSelectedVote(null);
   }, []);
-  const onStartCount = useCallback(() => {
-    setSeconds(selectedTime);
+  const onStartCount = useCallback((time) => {
+    setSeconds(time);
     setIsActive(true);
     setShowCounter(true);
     setIsSelectionLocked(false);
-  }, [selectedTime]);
+  }, []);
+
+  const onResetButton = useCallback(() => {
+    setSelectedVote(false);
+  }, []);
 
   useEffect(() => {
     console.log("TEST");
-
+    socket.on("elmo-req", onElmo);
     socket.on("break notification", onNotification);
     socket.on("connect", onConnect);
-    socket.on("disconnect", onDisconnect);
     socket.on("user list", onNewUser);
     socket.on("show-results", onShowresults);
     socket.on("show-card", onShowCard);
     socket.on("start-count", onStartCount);
+    socket.on("voteReset", onResetButton);
 
     return () => {
+      socket.off("elmo-req", onElmo);
       socket.off("break notification", onNotification);
       socket.off("connect", onConnect);
-      socket.off("disconnect", onDisconnect);
       socket.off("user list", onNewUser);
       socket.off("show-results", onShowresults);
       socket.off("show-card", onShowCard);
       socket.off("start-count", onStartCount);
+      socket.off("voteReset", onResetButton);
     };
   }, [
     onNotification,
     onConnect,
-    onDisconnect,
     onNewUser,
     onShowresults,
     onShowCard,
     onStartCount,
+    onElmo,
+    onResetButton,
   ]);
 
   const [usersData, setUsersData] = useState([]);
@@ -194,98 +219,127 @@ const Dashboard = () => {
       >
         {showCounter && <h1>{formatTime(seconds)}</h1>}
       </div>
+      <BreakDialog open={openBreak} setOpen={(data) => setOpenBreak(data)} />
       <ElmoDialog open={openElmo} setOpen={(data) => setOpenElmo(data)} />
       <Grid container spacing={3} style={{ padding: "20px" }}>
         <Grid item lg={8} sm={8}>
-          <Grid container spacing={2} style={{ marginBottom: "24px" }}>
+          <Grid
+            container
+            spacing={2}
+            justifyContent={"center"}
+            style={{ marginBottom: "24px" }}
+          >
             {openchart ? (
               <PieActiveArc xAxisData={numbers} usersData={usersData} />
             ) : (
               showPointCards &&
               numbers.map((number, index) => (
                 <>
-                <Grid
-                  item
-                  lg={3}
-                  md={3}
-                  sm={4}
-                  xs={6}
-                  key={"point-card-" + index}
-                  onClick={() => handleClick(number, index)}
-                >
-                  <PointCard
-                    index={index}
-                    number={number}
-                    selected={selectedVote === number}
-                  />
-                </Grid>
-                <Snackbar
-                  open={open}
-                  autoHideDuration={3000}
-                  onClose={handleSnackbarClose}
-                  anchorOrigin={{vertical:"top",horizontal:"center"}}
-                >
-                  <Alert 
-                    onClose={handleSnackbarClose}
-                    severity="error"
+                  <Grid
+                    item
+                    lg={3}
+                    md={3}
+                    sm={4}
+                    xs={6}
+                    key={"point-card-" + index}
+                    onClick={() => handleClick(number, index)}
                   >
-                    Yöneticinin oylamayı başlatması bekleniyor
-                  </Alert>
-                </Snackbar>
+                    <PointCard
+                      index={index}
+                      number={number}
+                      selected={selectedVote === number}
+                    />
+                  </Grid>
+                  <Snackbar
+                    open={open}
+                    autoHideDuration={3000}
+                    onClose={handleSnackbarClose}
+                    anchorOrigin={{ vertical: "top", horizontal: "center" }}
+                  >
+                    <Alert onClose={handleSnackbarClose} severity="error">
+                      Yöneticinin oylamayı başlatması bekleniyor
+                    </Alert>
+                  </Snackbar>
                 </>
               ))
             )}
+            <Grid
+              item
+              lg={3}
+              md={3}
+              sm={4}
+              xs={6}
+              onClick={() => onYetoClick()}
+            >
+              {showPointCards && <CardElmo />}
+            </Grid>
           </Grid>
           {!openchart && <Choice />}
         </Grid>
         <Grid item lg={3} sm={8}>
-          <Paper elevation={3} style={{ width:"400px" , padding: 16 }}>
-            {userRole === "admin" && <div
-              style={{
-                height:"75px",
-                display: "flex",
-                marginBottom: 16,
-              }}
+          <Paper elevation={3} style={{ width: "400px", padding: 16 }}>
+            {userRole === "admin" && (
+              <div
+                style={{
+                  height: "75px",
+                  display: "flex",
+                  marginBottom: 16,
+                }}
               >
-              <Paper elevation={0} style={{ width:"400px" ,}}>
-                <>
-                <div>
-                  <Typography>Oylamayı başlatmak için "Başlat" tıklayın</Typography>
-                </div>
-                <div style={{display:"flex", justifyContent:"center",marginTop:"10px"}}>
-                <Select style={{height:"37px"}} value={selectedTime} onChange={(e) => setSelectedTime(Number(e.target.value))} displayEmpty>
-                  <MenuItem value={15}>15 Saniye</MenuItem>
-                  <MenuItem value={30}>30 Saniye</MenuItem>
-                  <MenuItem value={45}>45 Saniye</MenuItem>
-                  <MenuItem value={60}>60 Saniye</MenuItem>
-                </Select>
-                <Button
-                  style={{ marginLeft: "10px" }}
-                  onClick={startCountdown}
-                  variant="contained"
-                  color="info"
-                >
-                  Başlat
-                </Button>
-                <Button
-                  style={{ marginLeft: "10px" }}
-                  onClick={resetVotes}
-                  variant="contained"
-                  color="error"
-                >
-                  Puanları Sıfırla
-                </Button>
-                </div>
+                <Paper elevation={0} style={{ width: "400px" }}>
+                  <>
+                    <div>
+                      <Typography>
+                        Oylamayı başlatmak için "Başlat" tıklayın
+                      </Typography>
+                    </div>
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "center",
+                        marginTop: "10px",
+                      }}
+                    >
+                      <Select
+                        style={{ height: "37px" }}
+                        value={selectedTime}
+                        onChange={(e) =>
+                          setSelectedTime(Number(e.target.value))
+                        }
+                        displayEmpty
+                      >
+                        <MenuItem value={15}>15 Saniye</MenuItem>
+                        <MenuItem value={30}>30 Saniye</MenuItem>
+                        <MenuItem value={45}>45 Saniye</MenuItem>
+                        <MenuItem value={60}>60 Saniye</MenuItem>
+                      </Select>
+                      <Button
+                        style={{ marginLeft: "10px" }}
+                        onClick={startCountdown}
+                        variant="contained"
+                        color="info"
+                      >
+                        Başlat
+                      </Button>
+                      <Button
+                        style={{ marginLeft: "10px" }}
+                        onClick={resetVotes}
+                        variant="contained"
+                        color="error"
+                      >
+                        Puanları Sıfırla
+                      </Button>
+                    </div>
                   </>
-              </Paper>
-              
-            </div>
-}
+                </Paper>
+              </div>
+            )}
             {userRole === "admin" && <hr />}
             <Typography>Oyuncular</Typography>
             <hr />
             <Usertable
-              selected={selectedVote}
+              // selected={selectedVote}
+              showCard={showPointCards}
               showScore={openchart}
               triger={triger}
               setUsersP={(usersData) => {
@@ -302,7 +356,10 @@ const Dashboard = () => {
                 <Typography>Takım Arkadaşı davet et</Typography>
               </AccordionSummary>
               <AccordionDetails>
-                <Typography>{"http://192.168.102.131:3000"}</Typography>
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <Typography>{"http://192.168.102.131:3000"}</Typography>
+                  {/* <Button onClick={copyToClipboard}>Kopyala</Button> */}
+                </div>
               </AccordionDetails>
             </Accordion>
             <hr />

@@ -19,7 +19,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { deleteUser, fetchUser, updateUser } from "../Services/userService";
 import OpenSnackbar from "./snackbar";
 
-function UserTable({ triger, setUsersP, showScore }) {
+function UserTable({ triger, setUsersP, showScore, showCard }) {
   const userRole = localStorage.getItem("userRole");
   const [users, setUsers] = useState([]);
   const [openDialog, setOpenDialog] = useState(false);
@@ -125,6 +125,8 @@ function UserTable({ triger, setUsersP, showScore }) {
   return (
     <List>
       {users.map((user) => {
+        console.log(user);
+
         const badgeColor = user.status ? "success" : "error";
         return (
           <ListItem key={user.id}>
@@ -172,9 +174,15 @@ function UserTable({ triger, setUsersP, showScore }) {
                 onClick={() => handleDeleteUser(user.id)}
               />
             )}
-            {showScore && ( // eğer dashborddan gelen değer true ise score gözükür -1 yani hiç oy verilmemişse de gözükmez
+            {(showCard || showScore) && (
               <Typography sx={{ marginLeft: 2 }}>
-                {user.score === -1 ? null : user.score}
+                {user.score === -1
+                  ? null
+                  : showCard
+                  ? "✓"
+                  : showScore
+                  ? user.score
+                  : null}
               </Typography>
             )}
           </ListItem>

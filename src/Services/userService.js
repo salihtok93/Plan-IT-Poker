@@ -1,4 +1,5 @@
 import axios from "axios";
+import { socket } from "./socket";
 // const BASE = "http://192.168.103.14:3000";
 const BASE = process.env.REACT_APP_BASE;
 const USERS = "/users";
@@ -6,6 +7,7 @@ const USERS = "/users";
 console.log(process.env.REACT_APP_BASE);
 export const registerUser = ({ name, email }) => {
   return axios.post(`${BASE}${USERS}/new-user`, {
+    socketId: socket.id,
     name: name,
     email: email,
   });
