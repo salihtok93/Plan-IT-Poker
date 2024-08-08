@@ -4,3 +4,5 @@ import { io } from "socket.io-client";
 const URL = process.env.REACT_APP_BASE;
 
 export const socket = io(URL);
+
+socket.emit("userConnected", localStorage.getItem("serverResponse"));
