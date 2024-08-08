@@ -62,7 +62,7 @@ export function PieActiveArc({ xAxisData, usersData }) {
             faded: { innerRadius: 30, additionalRadius: -30, color: "gray" },
           },
         ]}
-        height={200}
+        height={380}
       />
       <Typography
         style={{
@@ -71,7 +71,7 @@ export function PieActiveArc({ xAxisData, usersData }) {
           flexWrap: "wrap",
         }}
       >
-        Avarage değer: {averageScore.toFixed(2)} {/* Ortalamayı göster */}
+        Ortalama değer: {averageScore.toFixed(2)} {/* Ortalamayı göster */}
       </Typography>
     </div>
   );

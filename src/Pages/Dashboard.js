@@ -73,6 +73,7 @@ const Dashboard = () => {
   const handleShowCard = () => {
     setShowPointCards(true);
     setOpenchart(false);
+    setSelectedVote(null); // backhende de sıfırlanması lazım
     socket.emit("show card");
   };
 
@@ -225,6 +226,7 @@ const Dashboard = () => {
             <Typography>Oyuncular</Typography>
             <hr />
             <Usertable
+              selected={selectedVote}
               showScore={openchart}
               triger={triger}
               setUsersP={(usersData) => {
@@ -241,7 +243,7 @@ const Dashboard = () => {
                 <Typography>Takım Arkadaşı davet et</Typography>
               </AccordionSummary>
               <AccordionDetails>
-                <Typography>{"http://192.168.102.95:3000"}</Typography>
+                <Typography>{"http://192.168.102.131:3000"}</Typography>
               </AccordionDetails>
             </Accordion>
             <hr />

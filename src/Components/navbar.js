@@ -27,6 +27,7 @@ export default function Navbar({ setTrigger }) {
         setUserToDelete(null);
       });
     localStorage.removeItem("serverResponse");
+    localStorage.removeItem("userRole");
     window.location.reload();
   };
 
@@ -69,7 +70,7 @@ export default function Navbar({ setTrigger }) {
             component="div"
             sx={{ flexGrow: 1, color: "black" }}
           >
-            PlanITPoker
+            SammITPoker
             <Link style={{ margin: "10px" }} to="/">
               Home
             </Link>
