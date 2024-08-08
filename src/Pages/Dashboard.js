@@ -1,5 +1,5 @@
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
-import { Button, Grid, Paper, Typography } from "@mui/material";
+import { Alert, Button, Grid, MenuItem, Paper, Select, Snackbar, Typography } from "@mui/material";
 import Accordion from "@mui/material/Accordion";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import AccordionSummary from "@mui/material/AccordionSummary";
@@ -13,6 +13,7 @@ import { updateStatus } from "../Services/userService";
 import ElmoDialog from "../Components/elmoDialog";
 import Choice from "../Components/choice";
 
+
 const Dashboard = () => {
   const userRole = localStorage.getItem("userRole");
   const numbers = [0, 1, 2, 3, 5, 8, 13, 20, 40, 100, "?"];
@@ -22,13 +23,12 @@ const Dashboard = () => {
   const userId = localStorage.getItem("serverResponse");
   const [openElmo, setOpenElmo] = useState(false);
   const [showPointCards, setShowPointCards] = useState(true);
-
-  const initialSeconds = 10; // geri sayma başlangıcı
-  const [seconds, setSeconds] = useState(initialSeconds);
+  const [selectedTime, setSelectedTime] = useState(15);// geri sayma başlangıcı
+  const [seconds, setSeconds] = useState(0);
   const [isActive, setIsActive] = useState(false);
   const [showCounter, setShowCounter] = useState(false);
   const [isSelectionLocked, setIsSelectionLocked] = useState(true); // true iken oy veremiyor false iken veriyor
-
+  const [open, setOpen] = useState(false);
   useEffect(() => {
     let interval = null;
 
@@ -47,12 +47,12 @@ const Dashboard = () => {
     return () => clearInterval(interval);
   }, [isActive, seconds]);
 
+
   const startCountdown = () => {
     if (userRole === "admin") {
-      setSeconds(initialSeconds);
+      setSeconds(selectedTime);
       setIsActive(true);
       setShowCounter(true);
-      setSelectedVote(null);
       setIsSelectionLocked(false);
       socket.emit("startcount");
     }
@@ -75,7 +75,6 @@ const Dashboard = () => {
   const handleShowCard = () => {
     setShowPointCards(true);
     setOpenchart(false);
-    setSelectedVote(null); // backhende de sıfırlanması lazım
     socket.emit("show card");
   };
 
@@ -89,6 +88,8 @@ const Dashboard = () => {
         .catch((err) => {
           console.log(err);
         });
+    } else {
+      setOpen(true);
     }
   };
 
@@ -96,6 +97,14 @@ const Dashboard = () => {
     console.log("pause tıklandı");
     socket.emit("break request");
   };
+
+  const resetVotes = () => {
+    setSelectedVote(null); // backhende de sıfırlanması lazım
+  }
+
+  const handleSnackbarClose = () => {
+    setOpen(false);
+  }
 
   useEffect(() => {
     console.log(triger);
@@ -133,13 +142,14 @@ const Dashboard = () => {
   const onShowCard = useCallback(() => {
     setOpenchart(false);
     setShowPointCards(true);
+    setSelectedVote(null);
   }, []);
   const onStartCount = useCallback(() => {
-    setSeconds(initialSeconds);
+    setSeconds(selectedTime);
     setIsActive(true);
     setShowCounter(true);
     setIsSelectionLocked(false);
-  }, []);
+  }, [selectedTime]);
 
   useEffect(() => {
     console.log("TEST");
@@ -193,6 +203,7 @@ const Dashboard = () => {
             ) : (
               showPointCards &&
               numbers.map((number, index) => (
+                <>
                 <Grid
                   item
                   lg={3}
@@ -208,30 +219,69 @@ const Dashboard = () => {
                     selected={selectedVote === number}
                   />
                 </Grid>
+                <Snackbar
+                  open={open}
+                  autoHideDuration={3000}
+                  onClose={handleSnackbarClose}
+                  anchorOrigin={{vertical:"top",horizontal:"center"}}
+                >
+                  <Alert 
+                    onClose={handleSnackbarClose}
+                    severity="error"
+                  >
+                    Yöneticinin oylamayı başlatması bekleniyor
+                  </Alert>
+                </Snackbar>
+                </>
               ))
             )}
           </Grid>
           {!openchart && <Choice />}
         </Grid>
         <Grid item lg={3} sm={8}>
-          <Paper elevation={3} style={{ padding: 16 }}>
-            <div
+          <Paper elevation={3} style={{ width:"400px" , padding: 16 }}>
+            {userRole === "admin" && <div
               style={{
+                height:"75px",
                 display: "flex",
                 marginBottom: 16,
               }}
-            >
-              <Typography>Oylamayı başlatmak için "Başlat" tıklayın</Typography>
-              <Button
-                style={{ marginLeft: "15px" }}
-                onClick={startCountdown}
-                variant="contained"
-                color="info"
               >
-                Başlat
-              </Button>
+              <Paper elevation={0} style={{ width:"400px" ,}}>
+                <>
+                <div>
+                  <Typography>Oylamayı başlatmak için "Başlat" tıklayın</Typography>
+                </div>
+                <div style={{display:"flex", justifyContent:"center",marginTop:"10px"}}>
+                <Select style={{height:"37px"}} value={selectedTime} onChange={(e) => setSelectedTime(Number(e.target.value))} displayEmpty>
+                  <MenuItem value={15}>15 Saniye</MenuItem>
+                  <MenuItem value={30}>30 Saniye</MenuItem>
+                  <MenuItem value={45}>45 Saniye</MenuItem>
+                  <MenuItem value={60}>60 Saniye</MenuItem>
+                </Select>
+                <Button
+                  style={{ marginLeft: "10px" }}
+                  onClick={startCountdown}
+                  variant="contained"
+                  color="info"
+                >
+                  Başlat
+                </Button>
+                <Button
+                  style={{ marginLeft: "10px" }}
+                  onClick={resetVotes}
+                  variant="contained"
+                  color="error"
+                >
+                  Puanları Sıfırla
+                </Button>
+                </div>
+                  </>
+              </Paper>
+              
             </div>
-            <hr />
+}
+            {userRole === "admin" && <hr />}
             <Typography>Oyuncular</Typography>
             <hr />
             <Usertable
