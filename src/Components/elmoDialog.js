@@ -8,8 +8,8 @@ export default function ElmoDialog({ open, setOpen }) {
 
   return (
     <React.Fragment>
-      <Dialog fullWidth maxWidth="lg" open={open} onClose={handleClose}>
-        <img src={"/elmotwo.png"} alt="Logo" />
+      <Dialog fullWidth maxWidth="sm" open={open} onClose={handleClose}>
+        <img src={"/elmoG.gif"} alt="Logo" />
       </Dialog>
     </React.Fragment>
   );

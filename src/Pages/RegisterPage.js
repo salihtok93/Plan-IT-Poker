@@ -34,7 +34,7 @@ function UserRoleCard({ onSubmit }) {
       .then((res) => {
         console.log(res);
         localStorage.setItem("serverResponse", res.data.id);
-        localStorage.setItem("userRole", res.data.role);
+        localStorage.setItem("userRole", res.data.role); // değiştirilebilir
         window.location.reload();
         handleCancel();
         setSnackbarMessage("Kullanıcı başarıyla eklendi!");
