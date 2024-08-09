@@ -1,12 +1,10 @@
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import {
-  Alert,
   Button,
   Grid,
   MenuItem,
   Paper,
   Select,
-  Snackbar,
   Typography,
 } from "@mui/material";
 import Accordion from "@mui/material/Accordion";
@@ -22,9 +20,11 @@ import ElmoDialog from "../Components/elmoDialog";
 import Choice from "../Components/choice";
 import { CardElmo } from "../Components/cardElmo";
 import BreakDialog from "../Components/breakDialog";
+import OpenSnackbar from "../Components/snackbar";
 
 const Dashboard = () => {
-  const userRole = localStorage.getItem("userRole");
+  const [snackbarSeverity, setSnackbarSeverity] = useState("error");
+  const userRole = localStorage.getItem("userRole"); // değiştirilebilir
   const numbers = [0, 1, 2, 3, 5, 8, 13, 20, 40, 100, "?"];
   const [triger, setTrigger] = useState(0);
   const [openchart, setOpenchart] = useState(false);
@@ -38,7 +38,8 @@ const Dashboard = () => {
   const [isActive, setIsActive] = useState(false);
   const [showCounter, setShowCounter] = useState(false);
   const [isSelectionLocked, setIsSelectionLocked] = useState(true); // true iken oy veremiyor false iken veriyor
-  const [open, setOpen] = useState(false);
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
   useEffect(() => {
     let interval = null;
 
@@ -102,21 +103,31 @@ const Dashboard = () => {
           console.log(err);
         });
     } else {
-      setOpen(true);
+      setSnackbarSeverity("error");
+      setSnackbarMessage("Yöneticinin Oylamayı başlatması bekleniyor.");
+      setOpenSnackbar(true);
     }
   };
 
   const handlePause = () => {
     console.log("pause tıklandı");
-    socket.emit("break request");
+    const userName = // EMRAH İSTEĞİ ÜZERİNE
+      usersData.find(
+        (user) => user.id === localStorage.getItem("serverResponse")
+      )?.name || "User not found";
+
+    socket.emit("break request", userName);
   };
 
   const resetVotes = () => {
+    setSnackbarSeverity("success");
+    setSnackbarMessage("Oylama sıfırlandı");
+    setOpenSnackbar(true);
     socket.emit("voteReset");
   };
 
   const handleSnackbarClose = () => {
-    setOpen(false);
+    setOpenSnackbar(false);
   };
 
   useEffect(() => {
@@ -244,35 +255,24 @@ const Dashboard = () => {
             ) : (
               showPointCards &&
               numbers.map((number, index) => (
-                <>
-                  <Grid
-                    item
-                    lg={3}
-                    md={3}
-                    sm={4}
-                    xs={6}
-                    key={"point-card-" + index}
-                    onClick={() => handleClick(number, index)}
-                  >
-                    <PointCard
-                      index={index}
-                      number={number}
-                      selected={selectedVote === number}
-                    />
-                  </Grid>
-                  <Snackbar
-                    open={open}
-                    autoHideDuration={3000}
-                    onClose={handleSnackbarClose}
-                    anchorOrigin={{ vertical: "top", horizontal: "center" }}
-                  >
-                    <Alert onClose={handleSnackbarClose} severity="error">
-                      Yöneticinin oylamayı başlatması bekleniyor
-                    </Alert>
-                  </Snackbar>
-                </>
+                <Grid
+                  item
+                  lg={3}
+                  md={3}
+                  sm={4}
+                  xs={6}
+                  key={`point-card-${index}`}
+                  onClick={() => handleClick(number, index)}
+                >
+                  <PointCard
+                    index={index}
+                    number={number}
+                    selected={selectedVote === number}
+                  />
+                </Grid>
               ))
             )}
+
             <Grid
               item
               lg={3}
@@ -367,7 +367,7 @@ const Dashboard = () => {
               </AccordionSummary>
               <AccordionDetails>
                 <div style={{ display: "flex", alignItems: "center" }}>
-                  <Typography>{"http://192.168.102.131:3000"}</Typography>
+                  <Typography>{"http://192.168.102.178:3000"}</Typography>
                   {/* <Button onClick={copyToClipboard}>Kopyala</Button> */}
                 </div>
               </AccordionDetails>
@@ -405,6 +405,13 @@ const Dashboard = () => {
             </div>
           </Paper>
         </Grid>
+        <OpenSnackbar
+          open={openSnackbar}
+          message={snackbarMessage}
+          onClose={handleSnackbarClose}
+          severity={snackbarSeverity} // Uyarı seviyesini ayarlayabilirsin
+          position="center"
+        />
       </Grid>
     </>
   );

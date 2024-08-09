@@ -6,6 +6,7 @@ import Typography from "@mui/material/Typography";
 import IconButton from "@mui/material/IconButton";
 import { Link } from "react-router-dom";
 import { deleteUser } from "../Services/userService";
+import LogoutIcon from "@mui/icons-material/Logout";
 
 export default function Navbar({ setTrigger }) {
   const [isLoggedIn, setIsLoggedIn] = React.useState(true);
@@ -62,7 +63,7 @@ export default function Navbar({ setTrigger }) {
             <img
               src={"/samm_logo.png"}
               alt="Logo"
-              style={{ height: "40px", width: "auto" }}
+              style={{ height: "50px", width: "auto" }}
             />
           </IconButton>
           <Typography
@@ -70,27 +71,31 @@ export default function Navbar({ setTrigger }) {
             component="div"
             sx={{ flexGrow: 1, color: "black" }}
           >
-            SammITPoker
-            {!isLoggedIn && (
+            {/* SammITPoker */}
+            {/* {!isLoggedIn && (
               <Link style={{ margin: "10px" }} to="/">
                 Home
               </Link>
-            )}
+            )} */}
             {isLoggedIn && (
               <Link style={{ margin: "10px" }} to="/register">
                 Register
               </Link>
             )}
-            {!isLoggedIn && (
-              <Link
-                onClick={handleLogOut}
-                style={{ margin: "10px" }}
-                to="/register"
-              >
-                Çıkış
-              </Link>
-            )}
           </Typography>
+          {!isLoggedIn && (
+            <IconButton
+              onClick={handleLogOut}
+              size="large"
+              edge="start"
+              // sx={{ mr: 2 }}
+              component={Link}
+              to="/register"
+              color="error"
+            >
+              <LogoutIcon />
+            </IconButton>
+          )}
         </Toolbar>
       </AppBar>
     </Box>

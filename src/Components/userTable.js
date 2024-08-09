@@ -96,9 +96,9 @@ function UserTable({ triger, setUsersP, showScore, showCard }) {
           .then((res) => {
             console.log(res);
             fetchUsers();
-            localStorage.setItem("userRole", newRole);
+            localStorage.setItem("userRole", newRole); // değiştirilebilir
             setSnackbarMessage(
-              `${selectedUser.name} kullanıcısının rolü başarıyla güncellendi!`
+              `${selectedUser.name} Kullanıcısını rolü başarıyla güncellendi!`
             );
             setSnackbarOpen(true);
           })
@@ -117,6 +117,18 @@ function UserTable({ triger, setUsersP, showScore, showCard }) {
       }
     }
   };
+
+  // const updateRole = () => {
+  //   if (selectedUser) {
+  //     const newRole = "admin";
+  //     socket.emit("updateRole", selectedUser.id, newRole);
+  //     fetchUser();
+  //     setSnackbarMessage(
+  //       `${selectedUser.name} kullanicisin rolü başariyla güncellendi!`
+  //     );
+  //     setSnackbarOpen(true);
+  //   }
+  // };
 
   const handleSnackbarClose = () => {
     setSnackbarOpen(false);
@@ -162,7 +174,7 @@ function UserTable({ triger, setUsersP, showScore, showCard }) {
                 </Typography>
               }
             />
-            {user.status ? null : (
+            {user.status && userRole !== "admin" ? null : (
               <DeleteIcon
                 sx={{
                   "&:hover": {
@@ -214,9 +226,6 @@ function UserTable({ triger, setUsersP, showScore, showCard }) {
               </Typography>
               <Typography variant="body1">
                 <strong>Created Time:</strong> {selectedUser.time}
-              </Typography>
-              <Typography variant="body1">
-                <strong>Email:</strong> {selectedUser.email}
               </Typography>
             </>
           )}
