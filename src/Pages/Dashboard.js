@@ -174,6 +174,13 @@ const Dashboard = () => {
     setSelectedVote(false);
   }, []);
 
+  const onIdCheckResult = useCallback((result) => {
+    if(result !== userId) {
+      localStorage.removeItem("serverResponse");
+    }
+    
+  },[])
+
   useEffect(() => {
     console.log("TEST");
     socket.on("elmo-req", onElmo);
@@ -184,6 +191,7 @@ const Dashboard = () => {
     socket.on("show-card", onShowCard);
     socket.on("start-count", onStartCount);
     socket.on("voteReset", onResetButton);
+    socket.on("idCheckResult", onIdCheckResult);
 
     return () => {
       socket.off("elmo-req", onElmo);
@@ -194,7 +202,8 @@ const Dashboard = () => {
       socket.off("show-card", onShowCard);
       socket.off("start-count", onStartCount);
       socket.off("voteReset", onResetButton);
-    };
+      socket.off("idCheckResult", onIdCheckResult);
+  };
   }, [
     onNotification,
     onConnect,
@@ -204,6 +213,7 @@ const Dashboard = () => {
     onStartCount,
     onElmo,
     onResetButton,
+    onIdCheckResult,
   ]);
 
   const [usersData, setUsersData] = useState([]);
