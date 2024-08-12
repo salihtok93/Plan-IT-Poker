@@ -185,12 +185,39 @@ const Dashboard = () => {
     setSelectedVote(false);
   }, []);
 
-  const onIdCheckResult = useCallback((result) => {
-    if(result !== userId) {
-      localStorage.removeItem("serverResponse");
+  const onDeleteUser = (userId) => {
+    const loggedInUserId = localStorage.getItem("serverResponse");
+
+    if (userId === loggedInUserId) {
+      localStorage.clear();
+      window.location.reload();
+    } else {
+      setTrigger((t) => t + 1);
     }
-    
-  },[])
+  };
+
+  const onUpdateRole = ({ userId, newRole }) => {
+    console.log(`Kullanıcı rolü güncellendi:`, userId, newRole);
+
+    const loggedInUserId = localStorage.getItem("serverResponse");
+
+    if (userId === loggedInUserId) {
+      localStorage.setItem("userRole", newRole);
+      window.location.reload();
+    } else if (newRole === "admin") {
+      if (loggedInUserId) {
+        localStorage.setItem("userRole", "user");
+      }
+      setTrigger((t) => t + 1);
+    }
+  };
+
+  const onIdCheckResult = useCallback((result) => {
+    if (!result) {
+      localStorage.removeItem("serverResponse");
+      localStorage.removeItem("userRole");
+    }
+  }, []);
 
   useEffect(() => {
     console.log("TEST");
@@ -202,6 +229,8 @@ const Dashboard = () => {
     socket.on("show-card", onShowCard);
     socket.on("start-count", onStartCount);
     socket.on("voteReset", onResetButton);
+    socket.on("userDeleted", onDeleteUser);
+    socket.on("updatedRole", onUpdateRole);
     socket.on("idCheckResult", onIdCheckResult);
 
     return () => {
@@ -213,8 +242,10 @@ const Dashboard = () => {
       socket.off("show-card", onShowCard);
       socket.off("start-count", onStartCount);
       socket.off("voteReset", onResetButton);
+      socket.off("userDeleted", onDeleteUser);
+      socket.off("updatedRole", onUpdateRole);
       socket.off("idCheckResult", onIdCheckResult);
-  };
+    };
   }, [
     onNotification,
     onConnect,
@@ -228,6 +259,18 @@ const Dashboard = () => {
   ]);
 
   const [usersData, setUsersData] = useState([]);
+
+  const textToCopy = "http://192.168.102.193:3001"; // değiştirilecek değer
+  const copyToClipboard = () => {
+    navigator.clipboard
+      .writeText(textToCopy)
+      .then(() => {
+        setSnackbarMessage(`Panoya Kopyalandı`);
+        setSnackbarSeverity("success");
+        setOpenSnackbar(true);
+      })
+      .catch((err) => console.error("Failed to copy:", err));
+  };
 
   return (
     <>
@@ -366,9 +409,20 @@ const Dashboard = () => {
                 <Typography>Takım Arkadaşı davet et</Typography>
               </AccordionSummary>
               <AccordionDetails>
-                <div style={{ display: "flex", alignItems: "center" }}>
-                  <Typography>{"http://192.168.102.178:3000"}</Typography>
-                  {/* <Button onClick={copyToClipboard}>Kopyala</Button> */}
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    width: "100%",
+                  }}
+                >
+                  <Typography>{textToCopy}</Typography>
+                  <Button
+                    style={{ marginLeft: "auto" }}
+                    onClick={copyToClipboard}
+                  >
+                    Kopyala
+                  </Button>
                 </div>
               </AccordionDetails>
             </Accordion>
@@ -409,7 +463,7 @@ const Dashboard = () => {
           open={openSnackbar}
           message={snackbarMessage}
           onClose={handleSnackbarClose}
-          severity={snackbarSeverity} // Uyarı seviyesini ayarlayabilirsin
+          severity={snackbarSeverity}
           position="center"
         />
       </Grid>
