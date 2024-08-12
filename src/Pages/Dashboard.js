@@ -23,9 +23,9 @@ import BreakDialog from "../Components/breakDialog";
 import OpenSnackbar from "../Components/snackbar";
 
 const Dashboard = () => {
+  const [selectedNumber, setSelectedNumber] = useState([]);
   const [snackbarSeverity, setSnackbarSeverity] = useState("error");
   const userRole = localStorage.getItem("userRole"); // değiştirilebilir
-  const numbers = [0, 1, 2, 3, 5, 8, 13, 20, 40, 100, "?"];
   const [triger, setTrigger] = useState(0);
   const [openchart, setOpenchart] = useState(false);
   const [selectedVote, setSelectedVote] = useState(null);
@@ -119,6 +119,23 @@ const Dashboard = () => {
     socket.emit("break request", userName);
   };
 
+  useEffect(() => {
+    const storedNumbers = localStorage.getItem('numbers');
+    const storedNumberKey = localStorage.getItem('selectedNumberKey');
+
+    if(storedNumbers) {
+      const numbers = JSON.parse(storedNumbers);
+      
+      if(storedNumbers && storedNumberKey) {
+        setSelectedNumber(numbers[storedNumberKey || []]);
+      } else {
+        const firstKey = Object.keys(numbers)[0];
+        setSelectedNumber(numbers[firstKey] || []);
+      }
+    }
+  },[])
+
+
   const resetVotes = () => {
     setSnackbarSeverity("success");
     setSnackbarMessage("Oylama sıfırlandı");
@@ -190,7 +207,16 @@ const Dashboard = () => {
       localStorage.removeItem("serverResponse");
     }
     
-  },[])
+  },[userId]);
+
+  const onCardSelection = useCallback((key,number) => {
+    setShowCounter(false);
+    setSelectedVote(null);
+    socket.emit('voteReset')
+    if(number) {
+      setSelectedNumber(number[key || []])
+    }
+  },[]);
 
   useEffect(() => {
     console.log("TEST");
@@ -203,6 +229,7 @@ const Dashboard = () => {
     socket.on("start-count", onStartCount);
     socket.on("voteReset", onResetButton);
     socket.on("idCheckResult", onIdCheckResult);
+    socket.on("cardSelection", onCardSelection);
 
     return () => {
       socket.off("elmo-req", onElmo);
@@ -214,6 +241,7 @@ const Dashboard = () => {
       socket.off("start-count", onStartCount);
       socket.off("voteReset", onResetButton);
       socket.off("idCheckResult", onIdCheckResult);
+      socket.off("cardSelection", onCardSelection);
   };
   }, [
     onNotification,
@@ -225,6 +253,7 @@ const Dashboard = () => {
     onElmo,
     onResetButton,
     onIdCheckResult,
+    onCardSelection,
   ]);
 
   const [usersData, setUsersData] = useState([]);
@@ -251,10 +280,10 @@ const Dashboard = () => {
             style={{ marginBottom: "24px" }}
           >
             {openchart ? (
-              <PieActiveArc xAxisData={numbers} usersData={usersData} />
+              <PieActiveArc xAxisData={selectedNumber} usersData={usersData} />
             ) : (
               showPointCards &&
-              numbers.map((number, index) => (
+              selectedNumber.map((number, index) => (
                 <Grid
                   item
                   lg={3}
