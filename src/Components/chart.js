@@ -29,7 +29,7 @@ export function PieActiveArc({ xAxisData, usersData }) {
 
     xAxisData.forEach((element, index) => {
       const filteredUsers = usersData.filter(
-        (user) => user.score === element && !isNaN(user.score) // burada ? işaretinin hesaba katılmamasını istedik
+        (user) => user.score === element // && !isNaN(user.score) ekle burada ? işaretinin hesaba katılmamasını istedik
       );
 
       const count = filteredUsers.length;

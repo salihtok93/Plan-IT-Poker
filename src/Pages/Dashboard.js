@@ -17,7 +17,7 @@ import { socket } from "../Services/socket";
 import { PieActiveArc } from "../Components/chart";
 import { updateVote } from "../Services/voteService";
 import ElmoDialog from "../Components/elmoDialog";
-import Choice from "../Components/choice";
+// import Choice from "../Components/choice";
 import { CardElmo } from "../Components/cardElmo";
 import BreakDialog from "../Components/breakDialog";
 import OpenSnackbar from "../Components/snackbar";
@@ -212,12 +212,17 @@ const Dashboard = () => {
     }
   };
 
-  const onIdCheckResult = useCallback((result) => {
-    if (!result) {
-      localStorage.removeItem("serverResponse");
-      localStorage.removeItem("userRole");
-    }
-  }, []);
+  // const onIdCheckResult = useCallback(
+  //   (result) => {
+  //     console.log(result, " asdad" + userId);
+
+  //     if (result !== userId) {
+  //       localStorage.removeItem("serverResponse");
+  //       window.location.reload();
+  //     }
+  //   },
+  //   [userId]
+  // );
 
   useEffect(() => {
     console.log("TEST");
@@ -231,7 +236,7 @@ const Dashboard = () => {
     socket.on("voteReset", onResetButton);
     socket.on("userDeleted", onDeleteUser);
     socket.on("updatedRole", onUpdateRole);
-    socket.on("idCheckResult", onIdCheckResult);
+    // socket.on("idCheckResult", onIdCheckResult);
 
     return () => {
       socket.off("elmo-req", onElmo);
@@ -244,7 +249,7 @@ const Dashboard = () => {
       socket.off("voteReset", onResetButton);
       socket.off("userDeleted", onDeleteUser);
       socket.off("updatedRole", onUpdateRole);
-      socket.off("idCheckResult", onIdCheckResult);
+      // socket.off("idCheckResult", onIdCheckResult);
     };
   }, [
     onNotification,
@@ -255,21 +260,34 @@ const Dashboard = () => {
     onStartCount,
     onElmo,
     onResetButton,
-    onIdCheckResult,
+    // onIdCheckResult,
   ]);
 
   const [usersData, setUsersData] = useState([]);
 
-  const textToCopy = "http://192.168.102.193:3001"; // değiştirilecek değer
+  const textToCopy = "http://192.168.160.74:3001"; // değiştirilecek değer
   const copyToClipboard = () => {
-    navigator.clipboard
-      .writeText(textToCopy)
-      .then(() => {
-        setSnackbarMessage(`Panoya Kopyalandı`);
-        setSnackbarSeverity("success");
-        setOpenSnackbar(true);
-      })
-      .catch((err) => console.error("Failed to copy:", err));
+    if (navigator.clipboard) {
+      navigator.clipboard
+        .writeText(textToCopy)
+        .then(() => {
+          setSnackbarMessage(`Panoya Kopyalandı`);
+          setSnackbarSeverity("success");
+          setOpenSnackbar(true);
+        })
+        .catch((err) => console.error("Kopyalama başarısız oldu:", err));
+    } else {
+      // Desteklenmeyen ortamlar için yedek
+      const textarea = document.createElement("textarea");
+      textarea.value = textToCopy;
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand("copy");
+      document.body.removeChild(textarea);
+      setSnackbarMessage(`Panoya Kopyalandı`);
+      setSnackbarSeverity("success");
+      setOpenSnackbar(true);
+    }
   };
 
   return (
@@ -327,7 +345,7 @@ const Dashboard = () => {
               {showPointCards && <CardElmo />}
             </Grid>
           </Grid>
-          {!openchart && <Choice />}
+          {/* !openchart && <Choice /> */}
         </Grid>
         <Grid item lg={3} sm={8}>
           <Paper elevation={3} style={{ width: "400px", padding: 16 }}>

@@ -10,7 +10,7 @@ import OpenSnackbar from "../Components/snackbar";
 import { registerUser } from "../Services/userService";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import { socket } from "../Services/socket";
+// import { socket } from "../Services/socket";
 
 function UserRoleCard({ onSubmit }) {
   const navigate = useNavigate();
@@ -36,7 +36,7 @@ function UserRoleCard({ onSubmit }) {
         console.log(res);
         localStorage.setItem("serverResponse", res.data.id);
         localStorage.setItem("userRole", res.data.role);
-        socket.emit("idCheck", res.data.id);
+        // socket.emit("idCheck", res.data.id);
         window.location.reload();
         handleCancel();
         setSnackbarMessage("Kullanıcı başarıyla eklendi!");

@@ -221,9 +221,12 @@ function UserTable({ triger, setUsersP, showScore, showCard }) {
                 <strong>State:</strong>{" "}
                 {selectedUser.status ? "Active" : "Inactive"}
               </Typography>
-              <Typography variant="body1">
-                <strong>score:</strong> {selectedUser.score}
-              </Typography>
+              {userRole === "admin" && (
+                <Typography variant="body1">
+                  <strong>score:</strong> {selectedUser.score}
+                </Typography>
+              )}
+
               <Typography variant="body1">
                 <strong>Created Time:</strong> {selectedUser.time}
               </Typography>
