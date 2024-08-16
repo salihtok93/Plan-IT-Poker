@@ -5,6 +5,7 @@ import Dashboard from "./Pages/Dashboard";
 import ProtectedRoutes from "./utility/ProtectedRoutes";
 import Layout from "./layouts/Layout";
 import RegisterPage from "./Pages/RegisterPage";
+import SelectionPage from "./Pages/SelectionPage";
 //import Dashboard from "./Pages/Dashboard";
 //import Navbar from "./Components/navbar";
 // import RoomTable from "./Components/roomtable";
@@ -13,6 +14,7 @@ import RegisterPage from "./Pages/RegisterPage";
 
 function App() {
   const [isLoggedIn,setIsLoggedIn] = useState(false);
+  const userRole = localStorage.getItem('userRole')
 
     const checkLog = () => {
         if(localStorage.getItem('serverResponse')) {
@@ -39,8 +41,20 @@ function App() {
 
           {/*Protected Routes*/}
           <Route element={<ProtectedRoutes />}>
-            <Route path="/register" element={<Navigate to="/"/>}/>
-            <Route path="/" element={<Dashboard />} />
+          {userRole === "admin" ? (
+            <>
+              <Route path="/register" element={<Navigate to="/selection"/>}/>
+              <Route path="/" element={<Dashboard />} />
+              <Route path="/selection" element={<SelectionPage />}/>
+            </>
+          ) : (
+            <>
+              <Route path="/register" element={<Navigate to="/"/>}/>
+              <Route path="/" element={<Dashboard />} />
+              <Route path="/selection" element={<Navigate to="/"/>}/>
+            </>
+          )}
+            
           </Route>
         </Route>
       </Routes>

@@ -11,6 +11,7 @@ import LogoutIcon from "@mui/icons-material/Logout";
 export default function Navbar({ setTrigger }) {
   const [isLoggedIn, setIsLoggedIn] = React.useState(true);
   const [userToDelete, setUserToDelete] = React.useState(null);
+  const userRole = localStorage.getItem('userRole');
 
   React.useEffect(() => {
     setUserToDelete(localStorage.getItem("serverResponse"));
@@ -29,6 +30,8 @@ export default function Navbar({ setTrigger }) {
       });
     localStorage.removeItem("serverResponse");
     localStorage.removeItem("userRole");
+    localStorage.removeItem("numbers");
+    localStorage.removeItem("selectedNumberKey");
     window.location.reload();
   };
 
@@ -71,12 +74,18 @@ export default function Navbar({ setTrigger }) {
             component="div"
             sx={{ flexGrow: 1, color: "black" }}
           >
-            {/* SammITPoker */}
-            {/* {!isLoggedIn && (
-              <Link style={{ margin: "10px" }} to="/">
-                Home
-              </Link>
-            )} */}
+             SammITPoker 
+             {!isLoggedIn && userRole === "admin" && (
+              <>
+                <Link style={{ margin: "10px" }} to="/">
+                  Home
+                </Link>
+                <Link style={{ margin: "10px" }} to="/selection">
+                  Card Selection
+                </Link>
+              </>
+            )} 
+
             {isLoggedIn && (
               <Link style={{ margin: "10px" }} to="/register">
                 Register
